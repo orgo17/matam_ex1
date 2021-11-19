@@ -13,71 +13,99 @@ typedef enum {
     UNSORTED_LIST, 
     NULL_ARGUMENT, 
 } ErrorCode; 
- 
+
+//Originl functions 
 int getListLength(Node list); 
 bool isListSorted(Node list); 
 ErrorCode mergeSortedLists(Node list1, Node list2, Node *mergedOut);
 
-bool isList1Bigger(Node num_list1, Node num_list2);
-ErrorCode createNext(Node tmp);
+//New helper functions
+/*
+    Input: list1 - sorted linked list
+    list2 - sorted linked list
+    Output: returns True if list1 value is bigger than list2 value, and False otherwise
+*/
+bool isList1Bigger(Node list1, Node list2);
+/*
+    Input: tmp - temporary Node used to sbuild mergedOut
+    mergedOut - sorted linked list
+    Output: appropriate error code
+*/
+ErrorCode createNextNode(Node tmp, Node *mergedOut);
+/*
+    Input: list - pointer to a linked list
+    Function frees the memory allocated to the list
+*/
+void destroyList(Node *list);
 
 //Function implementation:
 ErrorCode mergeSortedLists(Node list1, Node list2, Node *mergedOut)
 {   
+    mergedOut = NULL;
     if(!list1 || !list2){
-        mergedOut = NULL;
         return EMPTY_LIST;
     }
     if(!isListSorted(list1) || !isListSorted(list2))
     {
-        mergedOut = NULL;
         return UNSORTED_LIST;
     }
     Node tmp = malloc(sizeof(Node));
     if(!tmp){
-        mergedOut = NULL;
         return MEMORY_ERROR;
     }
     mergedOut = &tmp;
-    while(list1->next && list2->next)
+    while(list1->next && list2->next)//add numbers to mergedOut
     {
         if(isList1Bigger(list1, list2)){
             tmp->x = list1->x;
+            list1 = list1->next;
         }
         else{
             tmp->x = list2->x;
+            list2 = list2->next;
         }
-        if(createNext(tmp) == MEMORY_ERROR){
-            mergedOut = NULL;
+        if(createNextNode(tmp,mergedOut) == MEMORY_ERROR){
             return MEMORY_ERROR;
         }
     }
-    while(list1->next){
+    while(list1->next){//add remaining numbers from list1 to mergedOut
         tmp->x = list1->x;
-        if(createNext(tmp) == MEMORY_ERROR){
-            mergedOut = NULL;
+        if(createNextNode(tmp,mergedOut) == MEMORY_ERROR){
             return MEMORY_ERROR;
         }
+        list1 = list1->next;
     }
-    while(list2->next){
+    while(list2->next){//add remaining numbers from list2 to mergedOut
         tmp->x = list2->x;
-        if(createNext(tmp) == MEMORY_ERROR){
-            mergedOut = NULL;
+        if(createNextNode(tmp,mergedOut) == MEMORY_ERROR){
             return MEMORY_ERROR;
         }
+        list2 = list2->next;
     }
     return SUCCESS;
 }
 
-bool isList1Bigger(Node num_list1, Node num_list2)
+void destroyList(Node *list)
 {
-    return num_list1->x > num_list2->x;
+    while(list)
+    {
+        Node to_delete = (*list);
+        (*list) = (*list)->next;
+        free(to_delete);
+    }
+    list = NULL;
 }
 
-ErrorCode createNext(Node tmp)
+bool isList1Bigger(Node list1, Node list2)
+{
+    return list1->x > list2->x;
+}
+
+ErrorCode createNextNode(Node tmp, Node *mergedOut)
 {
     tmp->next = malloc(sizeof(Node));
     if(!(tmp->next)){
+        destroyList(mergedOut);
         return MEMORY_ERROR;
     }
     else{
