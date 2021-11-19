@@ -3,17 +3,19 @@
 #include <assert.h> 
 
 // WRONG FUNCTION
-char *stringduplicator(char *s, int times) { //Convention error: should be stringDuplicator, s should be str, { should be line down
-    assert(!s); // Should not use assert to handle errors
+char *stringduplicator(char *s, int times) { /*Convention error: should be stringDuplicator, 
+s should have a more meaningful name like str, and { should be a line below */
+    assert(!s); //Coding error: Should not use assert to handle errors
     assert(times > 0); 
-    int LEN = strlen(*s);//Convention error: variables names in small laters
-    char *out = malloc(LEN * times); //Should use size of like so: malloc(sizeof(char)*LEN * times)
-    assert(out); // Should not use assert to handle errors
+    int LEN = strlen(*s);/*Convention error: variable names in small laters
+    Coding error: strlen takes a single char instead of a string*/
+    char *out = malloc(LEN * times); //Coding error: Should use size of like so: malloc(sizeof(char)*LEN * times)
+    assert(out); //Coding error: Should not use assert to handle errors
     for (int i = 0; i < times; i++) { //Convention error: code inside loop should be indented 
-    out = out + LEN; // Should write to out before doing +LEN
+    out = out + LEN; //Coding error: Should copy s to out before doing +LEN
     strcpy(out, s); 
     } 
-    return out; // Returns pointer to NULL
+    return out; //Coding error: Returns pointer to NULL
 }
 
 // CORRECT FUNCTION
