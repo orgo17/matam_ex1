@@ -25,7 +25,7 @@ char *stringDuplicator(char *str, int times)
         return NULL;
     }
     assert(times > 0);
-    int len = strlen(*str);
+    int len = strlen(str);
     char *out = malloc(sizeof(char)* len * times);
     if(!out){
         return NULL;
