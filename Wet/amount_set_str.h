@@ -228,8 +228,8 @@ char* asGetNext(AmountSet set);
  * Macro for iterating over a set.
  * Declares a new iterator for the loop.
  */
-#define AS_FOREACH(iterator, set)          \
-    for(iterator = asGetFirst(set) ; \
+#define AS_FOREACH(type, iterator, set)          \
+    for((type)iterator = (type)asGetFirst(set) ; \
         iterator ;                               \
         iterator = asGetNext(set))
 

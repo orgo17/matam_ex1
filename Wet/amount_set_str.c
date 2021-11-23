@@ -1,6 +1,7 @@
 #include "amount_set_str.h"
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #define SIZE_FOR_NULL -1
 
 struct AmountSet_t
@@ -8,12 +9,12 @@ struct AmountSet_t
     char *name;
     double amount;
     struct AmountSet_t *next;
-    char *iterator;
+    AmountSet iterator;
 };
 
 AmountSet asCreate()
 {
-    AmountSet created_amount_set = malloc(sizeof(AmountSet));
+    AmountSet created_amount_set = malloc(sizeof(*created_amount_set));
     if(created_amount_set == NULL){
         return NULL;
     }
@@ -45,31 +46,39 @@ static bool isAmountSetEmpty(AmountSet set)
     return false;
 }
 
-// AmountSet asCopy(AmountSet set)
-// {
-//     AmountSet copy = asCreate();
-//     if(copy == NULL || set == NULL){
-//         asDestroy(copy);
-//         return NULL;
-//     }
-//     while (set)
-//     {
-        
-//     }
-    
-// }
+AmountSet asCopy(AmountSet set)
+{
+    AmountSet amount_set_copy = asCreate();
+    if(amount_set_copy == NULL || set == NULL){
+        return NULL;
+    }
+    amount_set_copy = copyElement(set);
+    AmountSet p = amount_set_copy;
+    asGetFirst(set);
+    while(p)
+    {
+        AmountSet copy = copyElement(set->iterator);
+        if(copy == NULL){
+            asDestory(copy);
+            return NULL;
+        }
+        asGetNext(set);
+        p->next = copy;
+        p = copy;
+    }
+    return amount_set_copy;
+}
 
-// static AmountSet copyNode(AmountSet set)
-// {
-//     AmountSet copy = asCreate();
-//     if(copy == NULL || set == NULL){
-//         asDestroy(copy);
-//         return NULL;
-//     }
-//     copy->name = set->name;
-//     copy->amount = set->amount;
-//     return copy;
-// }
+static AmountSet copyElement(AmountSet element)
+{
+    AmountSet copy = asCreate();
+    if(copy == NULL || element == NULL){
+        return NULL;
+    }
+    copy->name = element->name;
+    copy->amount = element->amount;
+    return copy;
+}
 
 int asGetSize(AmountSet set)
 {
@@ -77,8 +86,8 @@ int asGetSize(AmountSet set)
         return SIZE_FOR_NULL;
     }
     int size = 0;
-    char* iterator_value_before = set->iterator;
-    AS_FOREACH(set->iterator, set)
+    AmountSet iterator_value_before = set->iterator;
+    for(char* iterator = asGetFirst(set) ;iterator ;iterator = asGetNext(set))
     {
         size++;
     }
@@ -91,10 +100,10 @@ bool asContains(AmountSet set, const char* element)
     if(!set){
         return false;
     }
-    char* iterator_value_before = set->iterator;
-    AS_FOREACH(set->iterator, set)
+    AmountSet iterator_value_before = set->iterator;
+    for(char* iterator = asGetFirst(set) ;iterator ;iterator = asGetNext(set))
     {
-        if(strcmp(element, set->iterator) == 0){
+        if(strcmp(element, set->iterator->name) == 0){
             return true;
         }
     }
@@ -123,8 +132,8 @@ char* asGetFirst(AmountSet set)
     if(!set || isAmountSetEmpty(set)){
         return NULL;
     }
-    set->iterator = set->name;
-    return set->iterator;
+    set->iterator = set;
+    return set->iterator->name;
 }
 
 char* asGetNext(AmountSet set)
@@ -132,27 +141,36 @@ char* asGetNext(AmountSet set)
     if(!set){
         return NULL;
     }
-    set->iterator = set->next->name;
+    set->iterator = set->next;
     if(!(set->iterator)){
         return NULL;
     }
-    return set->iterator;
+    return set->iterator->name;
 }
 
 AmountSetResult asRegister(AmountSet set, const char* element)
 {
-    if(!set){
+    if(!set || !element){
         return AS_NULL_ARGUMENT;
     }
     if(asContains(set,element)){
         return AS_ITEM_ALREADY_EXISTS;
     }
     AmountSet element_to_add = asCreate();
+    assert(element_to_add == NULL);
     element_to_add->name = element;
-    AmountSet pointer_to_start = set;
-    while(pointer_to_start->next && strcmp(pointer_to_start->next->name, element)<0)
-    {
-        pointer_to_start = pointer_to_start->next;
+    AmountSet pointer_to_current = set;
+    if(strcmp(pointer_to_current->name, element)<0){
+        element_to_add->next = set;
+        set = element_to_add;
+        return AS_SUCCESS;
     }
+    while(pointer_to_current->next && strcmp(pointer_to_current->next->name, element)<0)
+    {
+        pointer_to_current = pointer_to_current->next;
+    }
+    element_to_add->next = pointer_to_current->next;
+    pointer_to_current->next = element_to_add;
+    return AS_SUCCESS;
 }
 
