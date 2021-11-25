@@ -10,6 +10,7 @@ typedef struct List_t *List;
 typedef enum ListResult_t {
 	LIST_SUCCESS,
 	LIST_NULL_ARGUMENT,
+	LIST_ELEMENT_NOT_IN_LIST,
 	LIST_OUT_OF_MEMORY,
 } ListResult;
 
@@ -67,7 +68,20 @@ int listGetSize(List list);
 * an element failed)
 * LIST_SUCCESS the element has been inserted successfully
 */
-ListResult listInsertLexicographic(List list, char* element);
+ListResult listInsertLexicographic(List list, const char* element);
+
+/**
+ * Changes the amount of the target element in the target list to the targeted amount.
+ * 
+ * @param list The that contains the element to change its amount 
+ * @param amount The new amount for the target element
+ * @param element The element to change its amount
+ * @return 
+ * LIST_NULL_ARGUMENT if a NULL was sent as list
+ * LIST_ELEMENT_NOT_IN_LIST if element was not found in list
+ * LIST_SUCCESS the element has been inserted successfully
+ */
+ListResult listSetAmountOfElement(List list, double amount, const char* element);
 
 /**
 * Removes the given element from the list
@@ -89,5 +103,30 @@ ListResult listRemoveElement(List list, const char* element);
 * LIST_SUCCESS - Otherwise.
 */
 ListResult listClear(List list);
+
+/**
+ * compares list1 to list2 
+ * 
+ * @param list1 First list to compare 
+ * @param list2 Second list to compare
+ * @param result Stores the result of the comparsion. 
+ * true - if lists are equal, false - Otherwise
+ * @return 
+ * LIST_NULL_ARGUMENT - if a NULL pointer was sent.
+ * LIST_SUCCESS - Otherwise 
+ */
+ListResult listCompare(List list1, List list2, bool* result);
+
+/**
+ * Inserts element at the start of the list 
+ * 
+ * @param list Target list to add element
+ * @param element Element to add to the list
+ * @return 
+ * LIST_NULL_ARGUMENT - if a NULL pointer was sent.
+ * LIST_SUCCESS - Otherwise. 
+ */
+ListResult listInsertFirst(List list, const char* element);
+
 
 #endif /* LIST_STR_H_ */

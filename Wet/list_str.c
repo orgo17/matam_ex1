@@ -19,7 +19,22 @@ List listCreate()
 	}
 	new_list->name = NULL;
 	new_list->amount = 0;
+    new_list->next = NULL;
 	return new_list;
+}
+
+static List listCreateElement(const char *element)
+{
+    List new_list = listCreate();
+    if(new_list == NULL){
+        return NULL;
+    }
+    new_list->name = malloc(sizeof(element));
+    if(new_list->name == NULL){
+        return NULL;
+    }
+    strcpy(new_list->name, element);
+    return new_list;
 }
 
 void listDestroy(List list)
@@ -27,17 +42,21 @@ void listDestroy(List list)
 	while(list) {
 		List to_delete = list;
 		list = list->next;
+        free(to_delete->name);
 		free(to_delete);
 	}
 }
 
 static List copyElement(List element)
 {
-    List copy = listCreate();
-    if(copy == NULL || element == NULL){
+    if(element->name == NULL){
         return NULL;
     }
-    copy->name = element->name;
+    List copy;
+    copy = listCreateElement(element->name);
+    if(copy == NULL){
+        return NULL;
+    }
     copy->amount = element->amount;
     return copy;
 }
@@ -47,19 +66,22 @@ List listCopy(List list)
     if(list == NULL){
         return NULL;
     }
-    List list_copy = copyElement(list);
+    // copy list head
+    List list_copy = listCreate();
     if(list_copy == NULL){
         return NULL;
     }
-    List list_tmp = list;
-    List list_copy_tmp = list_copy;
+    List list_tmp = list->next;
+    List list_copy_pointer = list_copy;
+    // copy rest of the list
     while(list_tmp){
-        list_copy_tmp->next = copyElement(list_tmp->next);
-        if(list_copy_tmp->next == NULL){
+        List list_element_copy = copyElement(list_tmp);
+        if(list_element_copy == NULL){
             listDestroy(list_copy);
             return NULL;
         }
-        list_copy_tmp = list_copy_tmp->next;
+        list_copy_pointer->next = list_element_copy;
+        list_copy_pointer = list_copy_pointer->next;
         list_tmp = list_tmp->next;
     }
     return list_copy;
@@ -71,7 +93,7 @@ int listGetSize(List list)
         return NULL_POINTER;
     }
     int size = 0;
-    List copy = list;
+    List copy = list->next;
     while(copy){
         size++;
         copy = copy->next;
@@ -79,39 +101,88 @@ int listGetSize(List list)
     return size;
 }
 
-
 ListResult listRemoveElement(List list, const char* element)
 {
     if(!list){
         return LIST_NULL_ARGUMENT;
     }
-    List copy = list, prev;
+    List copy = list->next;
+    List before_copy = list;
+    // remember the element before the iterator, so we can unlink the element 
     while(!copy && strcmp(copy->name, element)!=0){
-        prev = copy;
+        before_copy = copy;
         copy = copy->next;
     }
-    prev->next = copy->next;
+    // unlinking
+    if(copy){
+        before_copy->next = copy->next;
+    }
+    else{
+        before_copy->next = NULL;
+    }
+    free(copy->name);
     free(copy);
     return LIST_SUCCESS;
 }
 
-ListResult listInsertLexicographic(List list, char* element)
+ListResult listInsertFirst(List list, const char* element)
+{
+    if(list == NULL){
+        return LIST_NULL_ARGUMENT;
+    }
+    List new_element = listCreateElement(element);
+    if(new_element == NULL){
+        return LIST_OUT_OF_MEMORY;
+    }
+    new_element->next = list->next;
+    list->next = new_element;
+    return LIST_SUCCESS;
+}
+
+ListResult listInsertLexicographic(List list, const char* element)
 {
     if(!list){
         return LIST_NULL_ARGUMENT;
     }
-    List new_element = listCreate();
+    if(list->next == NULL){
+        return listInsertFirst(list, element);
+    }
+    List new_element = listCreateElement(element);
     if(!new_element){
         return LIST_OUT_OF_MEMORY;
     }
-    new_element->name = element;
-    List copy = list, prev;
+    //if the element to be inserted is the smallest in lexicographic order
+    if(strcmp(list->next->name, element)>=0){
+        new_element->next = list->next;
+        list->next = new_element;
+        return LIST_SUCCESS;
+    }
+    List copy = list->next;
+    List previous = list;
+    //run till we need to add element
     while(!copy && strcmp(copy->name, element)<0){
-        prev = copy;
+        previous = copy;
         copy = copy->next;
     }
-    prev->next = new_element;
-    new_element->next = copy->next;
+    //add element
+    previous->next = new_element;
+    new_element->next = copy;
+    return LIST_SUCCESS;
+}
+
+ListResult listSetAmountOfElement(List list, double amount, const char* element)
+{
+    if(list == NULL){
+        return LIST_NULL_ARGUMENT;
+    }
+    List copy = list->next;
+    while(copy && strcmp(element, copy->name) != 0){
+        copy = copy->next;
+    }
+    if(copy == NULL){
+        return LIST_ELEMENT_NOT_IN_LIST;
+    }
+    copy->amount = amount;
     return LIST_SUCCESS;
 }
 
@@ -121,8 +192,29 @@ ListResult listClear(List list)
         return LIST_NULL_ARGUMENT;
     }
     listDestroy(list->next);
-    list->name = NULL;
-    list->amount = 0;
     list->next = NULL;
+    return LIST_SUCCESS;
+}
+
+ListResult listCompare(List list1, List list2, bool* result)
+{
+    if(!list1 || !list2){
+        return LIST_NULL_ARGUMENT;
+    }
+    *result = true;
+    List copy1 = list1->next, copy2 = list2->next;
+    while(copy1 && copy2)
+    {
+        if (strcmp(copy1->name,copy2->name)!=0 || (copy1->amount != copy2->amount))
+        {
+            *result = false;
+            break;
+        }
+        copy1 = copy1->next;
+        copy2 = copy2->next;
+    }
+    if((!copy1 && copy2) || (copy1 && !copy2)){
+        *result = false;
+    }
     return LIST_SUCCESS;
 }
