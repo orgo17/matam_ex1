@@ -1,4 +1,5 @@
 #include "amount_set_str.h"
+#include "list_str.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -6,33 +7,28 @@
 
 struct AmountSet_t
 {
-    char *name;
-    double amount;
-    struct AmountSet_t *next;
-    AmountSet iterator;
+    List items;
+    List iterator;
 };
 
 AmountSet asCreate()
 {
-    AmountSet created_amount_set = malloc(sizeof(*created_amount_set));
-    if(created_amount_set == NULL){
+    AmountSet set = malloc(sizeof(*set));
+    if(set == NULL){
         return NULL;
     }
-    created_amount_set->name = NULL;
-    created_amount_set->amount = 0;
-    created_amount_set->next = NULL;
-    created_amount_set->iterator = NULL;
-    return created_amount_set;
+    set->items = listCreate();
+    if(set->items == NULL){
+        return NULL;
+    }
+    set->iterator = set->items;
+    return set;
 }
 
 void asDestroy(AmountSet set)
 {
-    while (set)
-    {
-        AmountSet next = set->next;
-        free(set);
-        set = next;
-    }
+    listDestroy(set->items);
+    free(set);   
 }
 
 static bool isAmountSetEmpty(AmountSet set)
@@ -40,7 +36,7 @@ static bool isAmountSetEmpty(AmountSet set)
     if(!set){
         return true;
     }
-    if(set->name == NULL){
+    if(listGetNext(set->items) == NULL){
         return true;
     }
     return false;
@@ -52,32 +48,8 @@ AmountSet asCopy(AmountSet set)
     if(amount_set_copy == NULL || set == NULL){
         return NULL;
     }
-    amount_set_copy = copyElement(set);
-    AmountSet p = amount_set_copy;
-    asGetFirst(set);
-    while(p)
-    {
-        AmountSet copy = copyElement(set->iterator);
-        if(copy == NULL){
-            asDestory(copy);
-            return NULL;
-        }
-        asGetNext(set);
-        p->next = copy;
-        p = copy;
-    }
+    amount_set_copy->items = listCopy(set->items);
     return amount_set_copy;
-}
-
-static AmountSet copyElement(AmountSet element)
-{
-    AmountSet copy = asCreate();
-    if(copy == NULL || element == NULL){
-        return NULL;
-    }
-    copy->name = element->name;
-    copy->amount = element->amount;
-    return copy;
 }
 
 int asGetSize(AmountSet set)
@@ -85,14 +57,7 @@ int asGetSize(AmountSet set)
     if(!set){
         return SIZE_FOR_NULL;
     }
-    int size = 0;
-    AmountSet iterator_value_before = set->iterator;
-    for(char* iterator = asGetFirst(set) ;iterator ;iterator = asGetNext(set))
-    {
-        size++;
-    }
-    set->iterator = iterator_value_before;
-    return size;
+    return listGetSize(set->items);
 }
 
 bool asContains(AmountSet set, const char* element)
@@ -100,10 +65,10 @@ bool asContains(AmountSet set, const char* element)
     if(!set){
         return false;
     }
-    AmountSet iterator_value_before = set->iterator;
-    for(char* iterator = asGetFirst(set) ;iterator ;iterator = asGetNext(set))
-    {
-        if(strcmp(element, set->iterator->name) == 0){
+    List iterator_value_before = set->iterator;
+    AS_FOREACH(char*, i, set){
+        if(strcmp(element, i) == 0){
+            set->iterator = iterator_value_before;
             return true;
         }
     }
@@ -119,12 +84,14 @@ AmountSetResult asGetAmount(AmountSet set, const char* element, double* outAmoun
     if(!asContains(set,element)){
         return AS_ITEM_DOES_NOT_EXIST;
     }
-    AmountSet pointer_to_start = set;
-    while(pointer_to_start && strcmp(pointer_to_start->name, element) != 0){
-        pointer_to_start = pointer_to_start->next;
+    List iterator_value_before = set->iterator;
+    AS_FOREACH(char*, i, set){
+        if(strcmp(element, i) == 0){
+            *outAmount = listReturnAmountOfElement(set->iterator);
+            set->iterator = iterator_value_before;
+            return AS_SUCCESS;
+        }
     }
-    *outAmount = pointer_to_start->amount;
-    return AS_SUCCESS;
 }
 
 char* asGetFirst(AmountSet set)
@@ -132,8 +99,8 @@ char* asGetFirst(AmountSet set)
     if(!set || isAmountSetEmpty(set)){
         return NULL;
     }
-    set->iterator = set;
-    return set->iterator->name;
+    set->iterator = listGetNext(set->items);
+    return listReturnNameOfElement(set->iterator);
 }
 
 char* asGetNext(AmountSet set)
@@ -141,36 +108,55 @@ char* asGetNext(AmountSet set)
     if(!set){
         return NULL;
     }
-    set->iterator = set->next;
+    set->iterator = listGetNext(set->iterator);
     if(!(set->iterator)){
         return NULL;
     }
-    return set->iterator->name;
+    return listGetName(set->iterator);
 }
 
 AmountSetResult asRegister(AmountSet set, const char* element)
 {
-    if(!set || !element){
+    if(!set || !element || !set->items){
         return AS_NULL_ARGUMENT;
     }
     if(asContains(set,element)){
         return AS_ITEM_ALREADY_EXISTS;
     }
-    AmountSet element_to_add = asCreate();
-    assert(element_to_add == NULL);
-    element_to_add->name = element;
-    AmountSet pointer_to_current = set;
-    if(strcmp(pointer_to_current->name, element)<0){
-        element_to_add->next = set;
-        set = element_to_add;
-        return AS_SUCCESS;
-    }
-    while(pointer_to_current->next && strcmp(pointer_to_current->next->name, element)<0)
-    {
-        pointer_to_current = pointer_to_current->next;
-    }
-    element_to_add->next = pointer_to_current->next;
-    pointer_to_current->next = element_to_add;
+    ListResult insert_result = listInsertLexicographic(set->items, element);
+    assert(insert_result != LIST_OUT_OF_MEMORY);
     return AS_SUCCESS;
 }
+
+AmountSetResult asChangeAmount(AmountSet set, const char* element, double amount)
+{
+    if(set == NULL || set->items == NULL){
+        return AS_NULL_ARGUMENT;
+    }
+    if(!asContains(set,element)){
+        return AS_ITEM_DOES_NOT_EXIST;
+    }
+    double item_amount;
+    asGetAmount(set, element, &item_amount);
+    if(item_amount + amount < 0){
+        return AS_INSUFFICIENT_AMOUNT;
+    }
+    listSetAmountOfElement(set->items, item_amount + amount, element);
+    return AS_SUCCESS;
+}
+
+AmountSetResult asCompare(AmountSet set1, AmountSet set2, bool *result)
+{
+    if(set1 == NULL || set2 == NULL){
+        return AS_NULL_ARGUMENT;
+    }
+    if(listCompare(set1->items, set2->items, result) == LIST_NULL_ARGUMENT){
+        return AS_NULL_ARGUMENT;
+    }
+    if(listCompare(set1->iterator, set2->iterator, result) == LIST_NULL_ARGUMENT){
+        return AS_NULL_ARGUMENT;
+    }
+    return AS_SUCCESS;
+}
+
 

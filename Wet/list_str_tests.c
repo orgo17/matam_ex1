@@ -1,7 +1,10 @@
 #include "list_str.h"
 #include "list_str_tests.h"
+#include <string.h>
+#include <stdlib.h>
 #define NAMES 3
 #define DEMO_AMOUNT 10
+#define NULL_POINTER -1
 
 static List listCreateDemo()
 {
@@ -46,7 +49,7 @@ bool testListGetSizeNull()
 {
     List demo = NULL;
     int size = listGetSize(demo);
-    return size == -1;
+    return size == NULL_POINTER;
 }
 
 bool testListCopy()
@@ -152,9 +155,15 @@ bool testListRemoveInsert()
     listRemoveElement(demo, name);
     name = "a";
     listInsertLexicographic(demo, name);
-    int size = listGetSize(demo);
+    char* element_name = malloc(sizeof(*element_name));
+    if(element_name == NULL){
+        return false;
+    }
+    strcpy(element_name ,listReturnNameOfElement(listGetNext(demo)));
     listDestroy(demo);
-    return size==NAMES;
+    bool result = strcmp(name, element_name) == 0;
+    free(element_name);
+    return result;
 }
 
 bool testListSetAmountOfElement()
@@ -170,11 +179,37 @@ bool testListSetAmountOfElement()
     return !are_equal;
 }
 
-bool testListSetAmountOfElementEmptey()
+bool testListSetAmountOfElementEmpty()
 {
     const char* name = "bread";
     List demo = listCreate();
     ListResult result = listSetAmountOfElement(demo, 1, name);
     listDestroy(demo);
     return result == LIST_ELEMENT_NOT_IN_LIST;
+}
+
+bool testListReturnAmountOfElementNotEmptyList()
+{
+    List demo = listCreateDemo();
+    listDestroy(demo);
+    return listReturnAmountOfElement(listGetNext(demo)) == DEMO_AMOUNT;
+}
+bool testListReturnAmountOfElementEmptyList()
+{
+    List demo = listCreate();
+    listDestroy(demo);
+    return listReturnAmountOfElement(listGetNext(demo)) == NULL_POINTER;
+}
+
+bool testListReturnNameOfElementNotEmptyList()
+{
+    List demo = listCreateDemo();
+    listDestroy(demo);
+    return strcmp(listReturnNameOfElement(listGetNext(demo)), "bread") == 0;
+}
+bool testListReturnNameOfElementEmptyList()
+{
+    List demo = listCreate();
+    listDestroy(demo);
+    return listReturnNameOfElement(listGetNext(demo)) == NULL;
 }

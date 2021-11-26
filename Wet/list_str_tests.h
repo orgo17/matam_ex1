@@ -3,38 +3,10 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-/**
- * Tests if it was possible to create an empty list correctly.  
- * 
- * @return true if creation was succesful.
- * @return false if memory allocation failed during creation.
- */
 bool testCreateAndDestory();
-
-/**
- * Tests if the size of a non-empty list is returned correctly
- * 
- * @return true if the size that was calculated
- * @return false 
- */
 bool testListGetSize();
-
-/**
- * tests size of empty list 
- * 
- * @return true 
- * @return false 
- */
 bool testListGetSizeEmpty();
-
-/**
- *  tests size of null 
- * 
- * @return true 
- * @return false 
- */
 bool testListGetSizeNull();
-
 bool testListCopy();
 bool testListCopyEmpty();
 bool testListCopyNull();
@@ -46,7 +18,11 @@ bool testListClear();
 bool testListRemoveElement();
 bool testListRemoveInsert();
 bool testListSetAmountOfElement();
-bool testListSetAmountOfElementEmptey();
+bool testListSetAmountOfElementEmpty();
+bool testListReturnAmountOfElementNotEmptyList();
+bool testListReturnAmountOfElementEmptyList();
+bool testListReturnNameOfElementNotEmptyList();
+bool testListReturnNameOfElementEmptyList();
 
 
 /**

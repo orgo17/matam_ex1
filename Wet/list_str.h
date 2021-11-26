@@ -57,6 +57,17 @@ List listCopy(List list);
 int listGetSize(List list);
 
 /**
+ * Inserts element at the start of the list 
+ * 
+ * @param list Target list to add element
+ * @param element Element to add to the list
+ * @return 
+ * LIST_NULL_ARGUMENT - if a NULL pointer was sent.
+ * LIST_SUCCESS - Otherwise. 
+ */
+ListResult listInsertFirst(List list, const char* element);
+
+/**
 * Adds a new element to the list with amount 0, the new element will inserted in a way that keeps
 * the list sorted in a lexicographic order.
 *
@@ -118,15 +129,34 @@ ListResult listClear(List list);
 ListResult listCompare(List list1, List list2, bool* result);
 
 /**
- * Inserts element at the start of the list 
+ * Returns amount of given element.
  * 
- * @param list Target list to add element
- * @param element Element to add to the list
+ * @param element - element its amount will be returned 
  * @return 
- * LIST_NULL_ARGUMENT - if a NULL pointer was sent.
- * LIST_SUCCESS - Otherwise. 
+ * -1 if element is NULL
+ * amount of element otherwise 
  */
-ListResult listInsertFirst(List list, const char* element);
+double listReturnAmountOfElement(List element);
+
+/**
+ * Returns name of given element
+ * 
+ * @param element - element name to return
+ * @return
+ * NULL if element is NULL 
+ * element name otherwise
+ */
+const char* listReturnNameOfElement(List element);
+
+/**
+ * Returns a pointer to the next element of list
+ * 
+ * @param list - list its next will be returned
+ * NULL if list is NULL or empty
+ * pointer to list's next element otherwise
+ * 
+ */
+List listGetNext(List list);
 
 
 #endif /* LIST_STR_H_ */

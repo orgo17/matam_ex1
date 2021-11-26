@@ -17,6 +17,10 @@ int main()
     RUN_TEST(testListRemoveElement);
     RUN_TEST(testListRemoveInsert);
     RUN_TEST(testListSetAmountOfElement);
-    RUN_TEST(testListSetAmountOfElementEmptey);
+    RUN_TEST(testListSetAmountOfElementEmpty);
+    RUN_TEST(testListReturnAmountOfElementNotEmptyList);
+    RUN_TEST(testListReturnAmountOfElementEmptyList);
+    RUN_TEST(testListReturnNameOfElementEmptyList);
+    RUN_TEST(testListReturnNameOfElementEmptyList);
     return 0;
 }

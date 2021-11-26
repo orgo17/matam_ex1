@@ -218,3 +218,27 @@ ListResult listCompare(List list1, List list2, bool* result)
     }
     return LIST_SUCCESS;
 }
+
+double listReturnAmountOfElement(List element)
+{
+    if(element == NULL){
+        return NULL_POINTER;
+    }
+    return element->amount;
+}
+
+const char* listReturnNameOfElement(List element)
+{
+    if(element == NULL){
+        return NULL;
+    }
+    return element->name;
+}
+
+List listGetNext(List list)
+{
+    if(list == NULL){
+        return NULL;
+    }
+    return list->next;
+}
