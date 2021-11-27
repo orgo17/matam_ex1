@@ -1,5 +1,5 @@
 #include "amount_set_str.h"
-#include "list_str.h"
+#include "amount_set_str_list_str.h"
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -48,6 +48,7 @@ AmountSet asCopy(AmountSet set)
     if(amount_set_copy == NULL || set == NULL){
         return NULL;
     }
+    listDestroy(amount_set_copy->items);
     amount_set_copy->items = listCopy(set->items);
     return amount_set_copy;
 }
@@ -65,14 +66,13 @@ bool asContains(AmountSet set, const char* element)
     if(!set){
         return false;
     }
-    List iterator_value_before = set->iterator;
-    AS_FOREACH(char*, i, set){
-        if(strcmp(element, i) == 0){
-            set->iterator = iterator_value_before;
+    List pointer_to_items = listGetNext(set->items);
+    while(pointer_to_items){
+        if(strcmp(listReturnNameOfElement(pointer_to_items), element) == 0){
             return true;
         }
+        pointer_to_items = listGetNext(pointer_to_items);
     }
-    set->iterator = iterator_value_before;
     return false;
 }
 
@@ -84,14 +84,15 @@ AmountSetResult asGetAmount(AmountSet set, const char* element, double* outAmoun
     if(!asContains(set,element)){
         return AS_ITEM_DOES_NOT_EXIST;
     }
-    List iterator_value_before = set->iterator;
-    AS_FOREACH(char*, i, set){
-        if(strcmp(element, i) == 0){
-            *outAmount = listReturnAmountOfElement(set->iterator);
-            set->iterator = iterator_value_before;
-            return AS_SUCCESS;
+    List pointer_to_items = listGetNext(set->items);
+    while(pointer_to_items){
+        if(strcmp(element, listReturnNameOfElement(pointer_to_items)) == 0){
+            *outAmount = listReturnAmountOfElement(pointer_to_items);
+            break;
         }
+        pointer_to_items = listGetNext(pointer_to_items);
     }
+    return AS_SUCCESS;
 }
 
 char* asGetFirst(AmountSet set)
@@ -112,7 +113,7 @@ char* asGetNext(AmountSet set)
     if(!(set->iterator)){
         return NULL;
     }
-    return listGetName(set->iterator);
+    return listReturnNameOfElement(set->iterator);
 }
 
 AmountSetResult asRegister(AmountSet set, const char* element)
@@ -145,15 +146,33 @@ AmountSetResult asChangeAmount(AmountSet set, const char* element, double amount
     return AS_SUCCESS;
 }
 
+AmountSetResult asDelete(AmountSet set, const char* element)
+{
+    if(set == NULL){
+        return AS_NULL_ARGUMENT;
+    }
+    if(!asContains(set, element)){
+        return AS_ITEM_DOES_NOT_EXIST;
+    }
+    listRemoveElement(set->items, element);
+    return AS_SUCCESS;
+}
+
+AmountSetResult asClear(AmountSet set)
+{
+    if(set == NULL){
+        return AS_NULL_ARGUMENT;
+    }
+    listClear(set->items);
+    return AS_SUCCESS;
+}
+
 AmountSetResult asCompare(AmountSet set1, AmountSet set2, bool *result)
 {
     if(set1 == NULL || set2 == NULL){
         return AS_NULL_ARGUMENT;
     }
     if(listCompare(set1->items, set2->items, result) == LIST_NULL_ARGUMENT){
-        return AS_NULL_ARGUMENT;
-    }
-    if(listCompare(set1->iterator, set2->iterator, result) == LIST_NULL_ARGUMENT){
         return AS_NULL_ARGUMENT;
     }
     return AS_SUCCESS;
