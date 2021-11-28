@@ -1,4 +1,4 @@
-#include "amount_set_str.h"
+#include "../amount_set_str.h"
 #include "amount_set_str_tests.h"
 
 int main()

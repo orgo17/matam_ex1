@@ -151,12 +151,6 @@ ListResult listInsertLexicographic(List list, const char* element)
     if(!new_element){
         return LIST_OUT_OF_MEMORY;
     }
-    //if the element to be inserted is the smallest in lexicographic order
-    if(strcmp(list->next->name, element) > 0){
-        new_element->next = list->next;
-        list->next = new_element;
-        return LIST_SUCCESS;
-    }
     List copy = list->next;
     List previous = list;
     //run till we need to add element
