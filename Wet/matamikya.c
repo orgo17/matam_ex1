@@ -8,6 +8,7 @@ typedef struct product_t
 {
     const char* name;
     const unsigned int id;
+    double profit;
     MtmProductData product_data;
     MatamikyaAmountType amount_type;
 }Product;
@@ -22,7 +23,6 @@ struct Matamikya_t
 {
     AmountSet storage;
     Set orders;
-    AmountSet profits;
 };
 
 Matamikya matamikyaCreate()
@@ -33,7 +33,6 @@ Matamikya matamikyaCreate()
     }
     matamikya->storage = NULL;
     matamikya->orders = NULL;
-    matamikya->profits = NULL;
     return matamikya;
 }
 
@@ -44,7 +43,6 @@ void matamikyaDestroy(Matamikya matamikya)
     }
     asDestroy(matamikya->storage);
     setDestroy(matamikya->orders);
-    asDestroy(matamikya->profits);
     free(matamikya);
 }
 
