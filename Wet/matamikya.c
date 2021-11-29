@@ -86,16 +86,32 @@ static int compareProduct(ASElement product1, ASElement product2)
 typedef struct order_t
 {
     unsigned int id;
-    AmountSet products;
+    AmountSet products_ids;
 }*Order;
 
-static SetElement createOrder(const unsigned int id, CopyASElement product_copy_function, 
-                        FreeASElement product_free_function, CompareASElements product_compare_function)
+static ASElement copyProductId(ASElement product_id)
+{
+    unsigned int *product_id = malloc(sizeof(product_id));
+    RETURN_IF_NULL(product_id, NULL);
+    return (ASElement)product_id;
+}
+static void freeProductId(ASElement product_id)
+{
+    free(product_id);
+}
+static int compareProductId(ASElement product_id1, ASElement product_id2)
+{
+    return ((unsigned int*)product_id1) - ((unsigned int*)product_id2);
+}
+
+static SetElement createOrder(const unsigned int id, CopyASElement product_id_copy_function, 
+                        FreeASElement product_id_free_function, CompareASElements product_id_compare_function)
 {
     Order order = malloc(sizeof(*order));
     RETURN_IF_NULL(order, NULL);
     order->id = id;
-    order->products = asCreate(product_copy_function, product_free_function, product_compare_function);
+    order->products_ids = asCreate(product_id_copy_function, product_id_free_function,
+                                    product_id_compare_function);
     return (SetElement)order;
 }
 
@@ -104,8 +120,8 @@ static SetElement copyOrder(SetElement order)
     Order order_copy = malloc(sizeof(*order_copy));
     RETURN_IF_NULL(order_copy, NULL);
     order_copy->id = ((Order)order)->id;
-    order_copy->products = asCopy(((Order)order)->products);
-    if(order_copy->products == NULL){
+    order_copy->products_ids = ((Order)order)->products_ids;
+    if(order_copy->products_ids == NULL){
         free(order_copy);
         return NULL;
     }
@@ -114,7 +130,7 @@ static SetElement copyOrder(SetElement order)
 
 static void freeOrder(SetElement order)
 {
-    asDestroy(((Order)order)->products);
+    asDestroy((SetElement)((Order)order)->products_ids);
     free(order);
 }
 
@@ -168,9 +184,45 @@ MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const 
 unsigned int mtmCreateNewOrder(Matamikya matamikya)
 {
     if(matamikya->orders == NULL){
-        matamikya->orders = setCreate(product_copy_function,
-                                product_free_function, product_compare_function);
+        matamikya->orders = setCreate(copyOrder, freeOrder, compareOrder);
     }
-    Order new_order = createOrder(matamikya->next_order_id, );
-    setAdd(matamikya->orders, new_order);
+    Order new_order = createOrder(matamikya->next_order_id, copyProductId, freeProductId, compareProductId);
+    matamikya->next_order_id++;
+    setAdd(matamikya->orders, (SetElement)new_order);
+    return new_order->id;
 }
+
+static bool isOrderExists(Matamikya matamikya, const unsigned int orderId)
+{
+    Order tmp = createOrder(orderId, copyProductId, freeProductId, compareProductId);
+    if(tmp == NULL){
+        return false;
+    }
+    bool is_in = setIsIn(matamikya->orders, tmp);
+    freeOrder(tmp);
+    return is_in;
+}
+static bool isProductInStorage(Matamikya matamikya, const unsigned int productId)
+{
+    Product tmp = copyProduct(asGetFirst(matamikya->storage));
+    if(tmp == NULL){
+        return false;
+    }
+    tmp->id = productId;
+    bool is_in = asContains(matamikya->storage, tmp);
+    freeProduct(tmp);
+    return is_in;
+}
+
+MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigned int orderId,
+                                     const unsigned int productId, const double amount)
+{
+    RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
+    if(!isOrderExists(matamikya, orderId){
+        return MATAMIKYA_ORDER_NOT_EXIST;
+    }
+    if(!isProductInStorage(matamikya, productId)){
+        return MATAMIKYA_PRODUCT_NOT_EXIST;
+    }
+}
+
