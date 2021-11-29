@@ -3,6 +3,7 @@
 #include "set.h"
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #define CAPITAl_A 'A'
 #define CAPITAL_Z 'Z'
 #define SMALL_A 'a'
@@ -192,8 +193,6 @@ struct Matamikya_t
     unsigned int next_order_id;
 };
 
-
-
 Matamikya matamikyaCreate()
 {
     Matamikya matamikya = malloc(sizeof(*matamikya));
@@ -221,17 +220,29 @@ MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const 
 {
     if(matamikya == NULL || name == NULL || customData == NULL || 
         copyData == NULL || freeData == NULL || prodPrice == NULL){
-        return NULL;
+        return MATAMIKYA_NULL_ARGUMENT;
     }
     if(!isNameValid(name)){
-        return MATAMIKYA_INVALID_AMOUNT;
+        return MATAMIKYA_INVALID_NAME;
     }
     if(amount < 0 || !isAmountConsistent(amount, amountType)){
         return MATAMIKYA_INVALID_AMOUNT;
     }
     if(matamikya->storage == NULL){
         matamikya->storage = asCreate(copyProduct, freeProduct, compareProduct);
+        matamikya->profit = asCreate(copyProductId, freeProductId, compareProductId);
+        RETURN_IF_NULL(matamikya->storage, MATAMIKYA_OUT_OF_MEMORY);
+        RETURN_IF_NULL(matamikya->profit, MATAMIKYA_OUT_OF_MEMORY);
     }
+    if(isProductInStorage(matamikya, id)){
+        return MATAMIKYA_PRODUCT_ALREADY_EXIST;
+    }
+    ASElement product_to_add = createProduct(name, id, customData, amountType, copyData, freeData, prodPrice);
+    RETURN_IF_NULL(product_to_add, MATAMIKYA_OUT_OF_MEMORY);
+    AmountSetResult storage_register_result = asRegister(matamikya->storage, product_to_add);
+    AmountSetResult profit_register_result = asRegister(matamikya->profit, (ASElement)(((Product)product_to_add)->id));
+    assert(storage_register_result == AS_SUCCESS && profit_register_result == AS_SUCCESS);
+    return MATAMIKYA_SUCCESS;
 }
 
 unsigned int mtmCreateNewOrder(Matamikya matamikya)
