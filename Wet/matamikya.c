@@ -23,6 +23,7 @@ struct Matamikya_t
 {
     AmountSet storage;
     Set orders;
+    double next_order_id;
 };
 
 Matamikya matamikyaCreate()
@@ -33,6 +34,7 @@ Matamikya matamikyaCreate()
     }
     matamikya->storage = NULL;
     matamikya->orders = NULL;
+    matamikya->next_order_id = 1;
     return matamikya;
 }
 
@@ -45,4 +47,9 @@ void matamikyaDestroy(Matamikya matamikya)
     setDestroy(matamikya->orders);
     free(matamikya);
 }
+
+MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const char *name,
+                              const double amount, const MatamikyaAmountType amountType,
+                              const MtmProductData customData, MtmCopyData copyData,
+                              MtmFreeData freeData, MtmGetProductPrice prodPrice);
 
