@@ -1,20 +1,8 @@
-#include "amount_set.h"
-#include "matamikya.h"
+#include "matamikya_help.h"
 #include "set.h"
+#include "amount_set.h"
+
 #include <stdlib.h>
-#include <string.h>
-#define CAPITAl_A 'A'
-#define CAPITAL_Z 'Z'
-#define SMALL_A 'a'
-#define SMALL_Z 'z'
-#define SMALLEST_DIGIT '0'
-#define BIGGEST_DIGIT '9'
-#define INTEGER_AMOUNT_DEVIATION 0.001
-#define 
-#define RETURN_IF_NULL(pointer, return_value)\
-        if(pointer == NULL){\
-            return return_value;\
-        }\
 
 typedef struct product_t
 {
@@ -129,92 +117,4 @@ static void freeOrder(SetElement order)
 static int compareOrder(SetElement order1, SetElement order2)
 {
     return ((Order)order1)->id - ((Order)order2)->id;
-}
-
-static bool isNameValid(char* name)
-{
-    RETURN_IF_NULL(name, false);
-    char first_letter = name[0];
-    return((SMALLEST_DIGIT < first_letter && first_letter < BIGGEST_DIGIT)||
-        (SMALL_A < first_letter && first_letter < SMALL_Z) ||
-        (CAPITAl_A < first_letter && first_letter < CAPITAL_Z));
-}
-
-static double getAbs(double number)
-{
-    return number > 0 ? number : -number;
-}
-
-static int roundToClosestInteger(double number)
-{
-    return (int)(number + 0.5);
-}
-
-static roundToClosestHalfInteger(double number)
-{
-    number *= 2.0;
-    number = (double)roundToClosestInteger(number);
-    return number / 2.0;
-}
-
-static bool isAmountConsistent(double amount, MatamikyaAmountType amountType)
-{
-    if(amountType == MATAMIKYA_INTEGER_AMOUNT){
-        return getAbs(roundToClosestInteger(amount) - amount) <= INTEGER_AMOUNT_DEVIATION;
-    }
-    else if(amountType == MATAMIKYA_HALF_INTEGER_AMOUNT){
-        return (getAbs(roundToClosestInteger(amount) - amount) <= INTEGER_AMOUNT_DEVIATION) ||
-                (getAbs(roundToClosestHalfInteger(amount) - amount) <= INTEGER_AMOUNT_DEVIATION);
-    }
-    return true;
-}
-
-struct Matamikya_t
-{
-    AmountSet storage;
-    Set orders;
-    AmountSet profit;
-    unsigned int next_order_id;
-};
-
-
-
-Matamikya matamikyaCreate()
-{
-    Matamikya matamikya = malloc(sizeof(*matamikya));
-    RETURN_IF_NULL(matamikya, NULL);
-    matamikya->storage = NULL;
-    matamikya->orders = NULL;
-    matamikya->profit = NULL;
-    matamikya->next_order_id = 1;
-    return matamikya;
-}
-
-void matamikyaDestroy(Matamikya matamikya)
-{
-    RETURN_IF_NULL(matamikya, NULL);
-    asDestroy(matamikya->storage);
-    setDestroy(matamikya->orders);
-    asDestroy(matamikya->profit);
-    free(matamikya);
-}
-
-MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const char *name,
-                              const double amount, const MatamikyaAmountType amountType,
-                              const MtmProductData customData, MtmCopyData copyData,
-                              MtmFreeData freeData, MtmGetProductPrice prodPrice)
-{
-    if(matamikya == NULL || name == NULL || customData == NULL || 
-        copyData == NULL || freeData == NULL || prodPrice == NULL){
-        return NULL;
-    }
-    if(!isNameValid(name)){
-        return MATAMIKYA_INVALID_AMOUNT;
-    }
-    if(amount < 0 || !isAmountConsistent(amount, amountType)){
-        return MATAMIKYA_INVALID_AMOUNT;
-    }
-    if(matamikya->storage == NULL){
-        matamikya->storage = asCreate(copyProduct, freeProduct, compareProduct);
-    }
 }
