@@ -247,24 +247,55 @@ unsigned int mtmCreateNewOrder(Matamikya matamikya)
 
 static bool isOrderExists(Matamikya matamikya, const unsigned int orderId)
 {
+    RETURN_IF_NULL(matamikya, false);
     Order tmp = createOrder(orderId, copyProductId, freeProductId, compareProductId);
-    if(tmp == NULL){
-        return false;
-    }
+    RETURN_IF_NULL(tmp, false);
     bool is_in = setIsIn(matamikya->orders, tmp);
     freeOrder(tmp);
     return is_in;
 }
 static bool isProductInStorage(Matamikya matamikya, const unsigned int productId)
 {
+    RETURN_IF_NULL(matamikya, false);
     Product tmp = copyProduct(asGetFirst(matamikya->storage));
-    if(tmp == NULL){
-        return false;
-    }
+    RETURN_IF_NULL(tmp, false);
     tmp->id = productId;
     bool is_in = asContains(matamikya->storage, tmp);
     freeProduct(tmp);
     return is_in;
+}
+static Product returnProductById(Matamikya matamikya, const unsigned int productId)
+{
+    RETURN_IF_NULL(matamikya, false);
+    if(!isProductInStorage(matamikya, productId)){
+        return NULL;
+    }
+    ASElement tmp = copyProduct(asGetFirst(matamikya->storage));
+    RETURN_IF_NULL(tmp, false);
+    ASElement searched_id = copyProduct(asGetFirst(matamikya->storage));
+    RETURN_IF_NULL(tmp, false);
+    ((Product)searched_id)->id = productId;
+    while(compareProduct(searched_id  , tmp) != 0){
+        tmp = asGetNext(matamikya->storage);
+    }
+    return (Product)tmp;
+}
+
+static Order returnOrderById(Matamikya matamikya, const unsigned int orerId)
+{
+    RETURN_IF_NULL(matamikya, false);
+    if(!isOrderExists(matamikya, orerId)){
+        return NULL;
+    }
+    SetElement tmp = copyOrder(setGetFirst(matamikya->orders));
+    RETURN_IF_NULL(tmp, false);
+    SetElement searched_id = copyOrder(setGetFirst(matamikya->storage));
+    RETURN_IF_NULL(tmp, false);
+    ((Order)searched_id)->id = orerId;
+    while(compareOrder(searched_id  , tmp) != 0){
+        tmp = asGetNext(matamikya->storage);
+    }
+    return (Order)tmp;
 }
 
 MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigned int orderId,
@@ -276,6 +307,13 @@ MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigne
     }
     if(!isProductInStorage(matamikya, productId)){
         return MATAMIKYA_PRODUCT_NOT_EXIST;
+    }
+    Product product_to_add = returnProductById(matamikya, productId);
+    if(!isAmountConsistent(amount, product_to_add->amount_type)){
+        return MATAMIKYA_INVALID_AMOUNT;
+    }
+    if(amount > 0){
+
     }
 }
 
