@@ -6,4 +6,4 @@ set(MTM_FLAGS_RELEASE "${MTM_FLAGS_DEBUG} -DNDEBUG")
 
 set(CMAKE_C_FLAGS ${MTM_FLAGS_DEBUG})
 
-add_executable(matamikya Wet/matamikya.c)
+add_executable(matamikya Wet/matamikya.c Wet/matamikya_help.c)

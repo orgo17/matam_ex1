@@ -1,19 +1,5 @@
 #include "matamikya_help.h"
-#include "set.h"
-#include "amount_set.h"
-
-#include <stdlib.h>
-
-typedef struct product_t
-{
-    char* name;
-    unsigned int id;
-    MtmProductData product_data;
-    MtmCopyData product_data_copy_function;
-    MtmFreeData product_data_free_function;
-    MtmGetProductPrice product_data_get_price;
-    MatamikyaAmountType amount_type;
-}*Product;
+#include <string.h>
 
 ASElement createProduct(const char* name, const unsigned int id, 
                         MtmProductData product_data, MatamikyaAmountType amount_type,
@@ -67,54 +53,64 @@ ASElement copyProduct(ASElement product)
     return (ASElement)product_copy;
 }
 
-static void freeProduct(ASElement product)
+void freeProduct(ASElement product)
 {
     free(((Product)product)->name);
     ((Product)product)->product_data_free_function(((Product)product)->product_data);
     free(product);
 }
 
-static int compareProduct(ASElement product1, ASElement product2)
+int compareProduct(ASElement product1, ASElement product2)
 {
     return ((Product)product1)->id - ((Product)product2)->id;
 }
 
-typedef struct order_t
+ASElement copyProductId(ASElement product_id)
 {
-    unsigned int id;
-    AmountSet products;
-}*Order;
+    ASElement product_id_copy = malloc(sizeof(product_id));
+    RETURN_IF_NULL(product_id_copy, NULL);
+    return product_id_copy;
+}
+void freeProductId(ASElement product_id)
+{
+    free(product_id);
+}
+int compareProductId(ASElement product_id1, ASElement product_id2)
+{
+    return ((unsigned int*)product_id1) - ((unsigned int*)product_id2);
+}
 
-static SetElement createOrder(const unsigned int id, CopyASElement product_copy_function, 
-                        FreeASElement product_free_function, CompareASElements product_compare_function)
+SetElement createOrder(const unsigned int id, CopyASElement product_id_copy_function, 
+                        FreeASElement product_id_free_function, CompareASElements product_id_compare_function)
 {
     Order order = malloc(sizeof(*order));
     RETURN_IF_NULL(order, NULL);
     order->id = id;
-    order->products = asCreate(product_copy_function, product_free_function, product_compare_function);
+    order->products_ids = asCreate(product_id_copy_function, product_id_free_function,
+                                    product_id_compare_function);
     return (SetElement)order;
 }
 
-static SetElement copyOrder(SetElement order)
+SetElement copyOrder(SetElement order)
 {
     Order order_copy = malloc(sizeof(*order_copy));
     RETURN_IF_NULL(order_copy, NULL);
     order_copy->id = ((Order)order)->id;
-    order_copy->products = asCopy(((Order)order)->products);
-    if(order_copy->products == NULL){
+    order_copy->products_ids = ((Order)order)->products_ids;
+    if(order_copy->products_ids == NULL){
         free(order_copy);
         return NULL;
     }
     return (SetElement)order_copy;
 }
 
-static void freeOrder(SetElement order)
+void freeOrder(SetElement order)
 {
-    asDestroy(((Order)order)->products);
+    asDestroy((SetElement)((Order)order)->products_ids);
     free(order);
 }
 
-static int compareOrder(SetElement order1, SetElement order2)
+int compareOrder(SetElement order1, SetElement order2)
 {
     return ((Order)order1)->id - ((Order)order2)->id;
 }
