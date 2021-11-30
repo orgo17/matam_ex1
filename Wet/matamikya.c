@@ -130,9 +130,31 @@ MatamikyaResult mtmChangeProductAmount(Matamikya matamikya, const unsigned int i
     if(isProductInStorage(matamikya, id)){
         MATAMIKYA_PRODUCT_NOT_EXIST;
     }
-    if(!isAmountConsistent(amount, amountType)){
+    if(!isAmountConsistent(amount, getProductAmountType(returnProductById(matamikya, id)))){
         return MATAMIKYA_INVALID_AMOUNT;
     }
+    AmountSetResult change_amount_in_storage_result = 
+                    asChangeAmount(matamikya->storage, returnProductById(matamikya, id), amount);
+    if(change_amount_in_storage_result == AS_NULL_ARGUMENT){
+        return MATAMIKYA_NULL_ARGUMENT;
+    }
+    if(change_amount_in_storage_result == AS_INSUFFICIENT_AMOUNT){
+        return MATAMIKYA_INSUFFICIENT_AMOUNT;
+    }
+    return MATAMIKYA_SUCCESS;
+}
+
+MatamikyaResult mtmClearProduct(Matamikya matamikya, const unsigned int id)
+{
+    RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
+    AmountSetResult delete_product_result = asDelete(matamikya->storage, returnProductById(matamikya, id));
+    if(delete_product_result == AS_NULL_ARGUMENT){
+        return MATAMIKYA_NULL_ARGUMENT;
+    }
+    if(delete_product_result == AS_ITEM_DOES_NOT_EXIST){
+        return MATAMIKYA_PRODUCT_NOT_EXIST;
+    }
+    return MATAMIKYA_SUCCESS;
 }
 
 unsigned int mtmCreateNewOrder(Matamikya matamikya)

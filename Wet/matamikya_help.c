@@ -65,24 +65,26 @@ int compareProduct(ASElement product1, ASElement product2)
     return ((Product)product1)->id - ((Product)product2)->id;
 }
 
+MatamikyaAmountType getProductAmountType(ASElement product)
+{
+    return ((Product)product)->amount_type;
+}
+
 ASElement copyProductId(ASElement product_id)
 {
     ASElement product_id_copy = malloc(sizeof(product_id));
     RETURN_IF_NULL(product_id_copy, NULL);
     return product_id_copy;
 }
+
 void freeProductId(ASElement product_id)
 {
     free(product_id);
 }
+
 int compareProductId(ASElement product_id1, ASElement product_id2)
 {
     return ((unsigned int*)product_id1) - ((unsigned int*)product_id2);
-}
-
-MatamikyaAmountType getProductAmountType(ASElement product)
-{
-    return ((Product)product)->amount_type;
 }
 
 SetElement createOrder(const unsigned int id, CopyASElement product_id_copy_function, 
