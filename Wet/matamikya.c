@@ -201,14 +201,14 @@ static ASElement returnOrderById(Matamikya matamikya, const unsigned int orderId
         return NULL;
     }
     SetElement searched_id = setGetFirst(matamikya->orders);
-    RETURN_IF_NULL(tmp, NULL);
+    RETURN_IF_NULL(searched_id, NULL);
     ((Order)searched_id)->id = orderId;
     SET_FOREACH(SetElement, iterator, matamikya->orders){
         if(compareOrder(iterator, searched_id) == 0){
             return iterator;
         }
     }
-    return NULL
+    return NULL;
 }
 // static ASElement return_as_element_in_order(Matamikya matamikya, const unsigned int orderId,
 //                                          const unsigned int productId)
