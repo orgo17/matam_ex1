@@ -188,12 +188,13 @@ MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigne
     if(!isProductInStorage(matamikya, productId)){
         return MATAMIKYA_PRODUCT_NOT_EXIST;
     }
-    Product product_to_add = returnProductById(matamikya, productId);
-    if(!isAmountConsistent(amount, product_to_add->amount_type)){
+    ASElement product_to_change = returnProductById(matamikya, productId);
+    assert(product_to_change);
+    if(!isAmountConsistent(amount, product_to_change->amount_type)){
         return MATAMIKYA_INVALID_AMOUNT;
     }
     if(amount > 0){
-        
+        asChangeAmount(matamikya->orders, product_to_change, amount);
     }
 }
 
