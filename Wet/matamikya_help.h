@@ -31,6 +31,7 @@ ASElement createProduct(const char* name, const unsigned int id,
 ASElement copyProduct(ASElement product);
 void freeProduct(ASElement product);
 int compareProduct(ASElement product1, ASElement product2);
+MatamikyaAmountType getProductAmountType(ASElement product);
 ASElement copyProductId(ASElement product_id);
 void freeProductId(ASElement product_id);
 int compareProductId(ASElement product_id1, ASElement product_id2);

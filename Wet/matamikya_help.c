@@ -80,6 +80,11 @@ int compareProductId(ASElement product_id1, ASElement product_id2)
     return ((unsigned int*)product_id1) - ((unsigned int*)product_id2);
 }
 
+MatamikyaAmountType getProductAmountType(ASElement product)
+{
+    return ((Product)product)->amount_type;
+}
+
 SetElement createOrder(const unsigned int id, CopyASElement product_id_copy_function, 
                         FreeASElement product_id_free_function, CompareASElements product_id_compare_function)
 {
