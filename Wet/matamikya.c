@@ -238,7 +238,6 @@ MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigne
     if(!isAmountConsistent(amount, ((Product)product_to_change)->amount_type)){
         return MATAMIKYA_INVALID_AMOUNT;
     }
-    free(product_to_change);
     AmountSetResult as_change_amount_result = asChangeAmount(matamikya->orders, product_to_change, amount);
     AmountSet order_to_change = returnOrderById(matamikya, orderId);
     //check if product in order
