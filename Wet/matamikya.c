@@ -29,7 +29,7 @@ static double getAbs(double number)
 
 static int roundToClosestInteger(double number)
 {
-    return (int)(number + 0.5);
+    return (int)(number < 0 ? (number - 0.5) : (number + 0.5));
 }
 
 static double roundToClosestHalfInteger(double number)
@@ -62,6 +62,8 @@ struct Matamikya_t
 static bool isProductInStorage(Matamikya matamikya, const unsigned int productId)
 {
     RETURN_IF_NULL(matamikya, false);
+    RETURN_IF_NULL(matamikya->storage, false);
+    RETURN_IF_NULL(asGetFirst(matamikya->storage), false);
     Product tmp = copyProduct(asGetFirst(matamikya->storage));
     RETURN_IF_NULL(tmp, false);
     tmp->id = productId;
@@ -92,6 +94,20 @@ void matamikyaDestroy(Matamikya matamikya)
     free(matamikya);
 }
 
+static ASElement returnProductById(Matamikya matamikya, AmountSet product_as, const unsigned int productId)
+{
+    RETURN_IF_NULL(product_as, NULL);
+    if(!isProductInStorage(matamikya, productId)){
+        return NULL;
+    }
+    AS_FOREACH(ASElement, iterator, product_as){
+        if((((Product)iterator)->id) - productId == 0){
+            return iterator;
+        }
+    }
+    return NULL;
+}
+
 MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const char *name,
                               const double amount, const MatamikyaAmountType amountType,
                               const MtmProductData customData, MtmCopyData copyData,
@@ -119,22 +135,25 @@ MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const 
     ASElement product_to_add = createProduct(name, id, customData, amountType, copyData, freeData, prodPrice);
     RETURN_IF_NULL(product_to_add, MATAMIKYA_OUT_OF_MEMORY);
     AmountSetResult storage_register_result = asRegister(matamikya->storage, product_to_add);
-    AmountSetResult profit_register_result = asRegister(matamikya->profit, (ASElement)(&((Product)product_to_add)->id));
+    AmountSetResult profit_register_result = 
+                    asRegister(matamikya->profit, (ASElement)(&((Product)product_to_add)->id));
     assert(storage_register_result == AS_SUCCESS && profit_register_result == AS_SUCCESS);
+    AmountSetResult storage_amount_result = asChangeAmount(matamikya->storage, product_to_add, amount);
+    assert(storage_amount_result == AS_SUCCESS);
     return MATAMIKYA_SUCCESS;
 }
 
 MatamikyaResult mtmChangeProductAmount(Matamikya matamikya, const unsigned int id, const double amount)
 {
     RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
-    if(isProductInStorage(matamikya, id)){
-        MATAMIKYA_PRODUCT_NOT_EXIST;
+    if(!isProductInStorage(matamikya, id)){
+        return MATAMIKYA_PRODUCT_NOT_EXIST;
     }
-    if(!isAmountConsistent(amount, getProductAmountType(returnProductById(matamikya, id)))){
+    if(!isAmountConsistent(amount, getProductAmountType(returnProductById(matamikya, matamikya->storage, id)))){
         return MATAMIKYA_INVALID_AMOUNT;
     }
     AmountSetResult change_amount_in_storage_result = 
-                    asChangeAmount(matamikya->storage, returnProductById(matamikya, id), amount);
+                    asChangeAmount(matamikya->storage, returnProductById(matamikya, matamikya->storage, id), amount);
     if(change_amount_in_storage_result == AS_NULL_ARGUMENT){
         return MATAMIKYA_NULL_ARGUMENT;
     }
@@ -147,12 +166,17 @@ MatamikyaResult mtmChangeProductAmount(Matamikya matamikya, const unsigned int i
 MatamikyaResult mtmClearProduct(Matamikya matamikya, const unsigned int id)
 {
     RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
-    AmountSetResult delete_product_result = asDelete(matamikya->storage, returnProductById(matamikya, id));
+    AmountSetResult delete_product_result = 
+                    asDelete(matamikya->storage, returnProductById(matamikya, matamikya->storage ,id));
     if(delete_product_result == AS_NULL_ARGUMENT){
         return MATAMIKYA_NULL_ARGUMENT;
     }
     if(delete_product_result == AS_ITEM_DOES_NOT_EXIST){
         return MATAMIKYA_PRODUCT_NOT_EXIST;
+    }
+    AmountSetResult delete_product_profit_result = asDelete(matamikya->profit, (ASElement)(&id));
+    if(delete_product_profit_result == AS_NULL_ARGUMENT){
+        return MATAMIKYA_NULL_ARGUMENT;
     }
     return MATAMIKYA_SUCCESS;
 }
@@ -178,50 +202,19 @@ static bool isOrderExists(Matamikya matamikya, const unsigned int orderId)
     return is_in;
 }
 
-static ASElement returnProductById(Matamikya matamikya, const unsigned int productId)
-{
-    RETURN_IF_NULL(matamikya, NULL);
-    if(!isProductInStorage(matamikya, productId)){
-        return NULL;
-    }
-    ASElement searched_id = asGetFirst(matamikya->storage);
-    RETURN_IF_NULL(searched_id, NULL);
-    ((Product)searched_id)->id = productId;
-    AS_FOREACH(ASElement, iterator, matamikya->storage){
-        if(compareProduct(iterator, searched_id) == 0){
-            return iterator;
-        }
-    }
-    return NULL;
-}
-static ASElement returnOrderById(Matamikya matamikya, const unsigned int orderId)
+static SetElement returnOrderById(Matamikya matamikya, const unsigned int orderId)
 {
     RETURN_IF_NULL(matamikya, NULL);
     if(!isOrderExists(matamikya, orderId)){
         return NULL;
     }
-    SetElement searched_id = setGetFirst(matamikya->orders);
-    RETURN_IF_NULL(searched_id, NULL);
-    ((Order)searched_id)->id = orderId;
     SET_FOREACH(SetElement, iterator, matamikya->orders){
-        if(compareOrder(iterator, searched_id) == 0){
+        if((((Order)iterator)->id) - orderId == 0){
             return iterator;
         }
     }
     return NULL;
 }
-// static ASElement return_as_element_in_order(Matamikya matamikya, const unsigned int orderId,
-//                                          const unsigned int productId)
-// {
-//     RETURN_IF_NULL(matamikya, NULL);
-//     Order order_to_change = returnOrderById(matamikya,orderId);
-//     ASElement tmp = asGetFirst(order_to_change);
-//     RETURN_IF_NULL(tmp, NULL);
-//     while(compareProductId(productId  , tmp) != 0 && !tmp){
-//         tmp = asGetNext(order_to_change);
-//     }
-//     return tmp;
-// }
 
 MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigned int orderId,
                                      const unsigned int productId, const double amount)
@@ -233,21 +226,85 @@ MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigne
     if(!isProductInStorage(matamikya, productId)){
         return MATAMIKYA_PRODUCT_NOT_EXIST;
     }
-    ASElement product_to_change = returnProductById(matamikya, productId);
+    ASElement product_to_change = returnProductById(matamikya,matamikya->storage, productId);
     assert(product_to_change);
     if(!isAmountConsistent(amount, ((Product)product_to_change)->amount_type)){
         return MATAMIKYA_INVALID_AMOUNT;
     }
-    AmountSetResult as_change_amount_result = asChangeAmount(matamikya->orders, product_to_change, amount);
+    AmountSetResult as_change_amount_result = asChangeAmount(returnOrderById(matamikya, orderId), product_to_change, amount);
     AmountSet order_to_change = returnOrderById(matamikya, orderId);
     //check if product in order
     if(as_change_amount_result == AS_ITEM_DOES_NOT_EXIST && amount>0){
-        asRegister(order_to_change, (ASElement)productId);
+        asRegister(order_to_change, (ASElement)(&productId));
         asChangeAmount(order_to_change, product_to_change, amount);
     }
     //check if product amount <= 0 and remove him from order
     if(as_change_amount_result == AS_INSUFFICIENT_AMOUNT){
-        asDelete(order_to_change, (ASElement)productId);
+        asDelete(order_to_change, (ASElement)(&productId));
+    }
+    return MATAMIKYA_SUCCESS;
+}
+
+static bool isNotEnoughInStorage(Matamikya matamikya, SetElement order)
+{
+    AS_FOREACH(ASElement, iterator, ((Order)order)->products_ids){
+        double amount_in_order = 0, amount_in_storage = 0;
+        asGetAmount(((Order)order)->products_ids ,iterator, &amount_in_order); 
+        asGetAmount(matamikya->storage,
+                    returnProductById(matamikya, matamikya->storage, *(int*)iterator), 
+                    &amount_in_storage);
+        if(amount_in_order > amount_in_storage){
+           return false;
+        }
+    }
+    return true;
+}
+
+static SetElement returnProfitById(Matamikya matamikya, const unsigned int productId)
+{
+    RETURN_IF_NULL(matamikya, NULL);
+    if(!isProductInStorage(matamikya, productId)){
+        return NULL;
+    }
+    AS_FOREACH(ASElement, iterator, matamikya->profit){
+        if(*(int*)iterator - productId == 0){
+            return iterator;
+        }
+    }
+    return NULL;
+}
+
+MatamikyaResult mtmShipOrder(Matamikya matamikya, const unsigned int orderId)
+{
+    RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
+    SetElement order = returnOrderById(matamikya, orderId);
+    if(!setIsIn(matamikya->orders, order)){
+        return MATAMIKYA_ORDER_NOT_EXIST;
+    }
+    if(isNotEnoughInStorage(matamikya, order)){
+        return MATAMIKYA_INSUFFICIENT_AMOUNT;
+    }
+    AS_FOREACH(ASElement, iterator, ((Order)order)->products_ids){
+        int product_id = *(int*)iterator;
+        double amount_in_order;
+        asGetAmount(((Order)order)->products_ids, iterator, &amount_in_order);
+        mtmChangeProductAmount(matamikya, product_id, -amount_in_order);
+        Product product_to_sell = (Product)returnProductById(matamikya, matamikya->storage, product_id);
+        double profit = product_to_sell->product_data_get_price(product_to_sell->product_data, amount_in_order);
+        asChangeAmount(matamikya->profit, returnProfitById(matamikya, product_id), profit);
+    }
+    return MATAMIKYA_SUCCESS;
+}
+
+MatamikyaResult mtmCancelOrder(Matamikya matamikya, const unsigned int orderId)
+{
+    RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
+    SetResult set_remove_result = setRemove(matamikya->orders, returnOrderById(matamikya, orderId));
+    if(set_remove_result == SET_NULL_ARGUMENT){
+        return MATAMIKYA_NULL_ARGUMENT;
+    }
+    if(set_remove_result == SET_ITEM_DOES_NOT_EXIST){
+        return MATAMIKYA_ORDER_NOT_EXIST;
     }
     return MATAMIKYA_SUCCESS;
 }
