@@ -4,10 +4,10 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdlib.h>
+#include <stdio.h>
 
-#define INVENTORY_OUT_FILE "tests/printed_inventory.txt"
-#define INVENTORY_TEST_FILE "tests/expected_inventory.txt"
+#define INVENTORY_OUT_FILE "printed_inventory.txt"
+#define INVENTORY_TEST_FILE "expected_inventory.txt"
 #define ORDER_OUT_FILE "tests/printed_order.txt"
 #define ORDER_TEST_FILE "tests/expected_order.txt"
 #define BEST_SELLING_OUT_FILE "tests/printed_best_selling.txt"
@@ -100,83 +100,83 @@ bool testModifyProducts() {
     return true;
 }
 
-// static void makeInventory(Matamikya mtm) {
-//     double basePrice = 8.9;
-//     mtmNewProduct(mtm, 4, "Tomato", 2019.11, MATAMIKYA_ANY_AMOUNT, &basePrice, copyDouble,
-//                   freeDouble, simplePrice);
-//     basePrice = 5.8;
-//     mtmNewProduct(mtm, 6, "Onion", 1789.75, MATAMIKYA_ANY_AMOUNT, &basePrice, copyDouble,
-//                   freeDouble, buy10Get10ForFree);
-//     basePrice = 2000;
-//     mtmNewProduct(mtm, 10, "Television", 15, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
-//                   copyDouble, freeDouble, simplePrice);
-//     basePrice = 5000;
-//     mtmNewProduct(mtm, 11, "Smart TV", 4, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
-//                   copyDouble, freeDouble, simplePrice);
-//     basePrice = 18.5;
-//     mtmNewProduct(mtm, 7, "Watermelon", 24.5, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
-//                   copyDouble, freeDouble, simplePrice);
-// }
-//
-// bool testModifyOrders() {
-//     Matamikya mtm = matamikyaCreate();
-//     makeInventory(mtm);
+static void makeInventory(Matamikya mtm) {
+    double basePrice = 8.9;
+    mtmNewProduct(mtm, 4, "Tomato", 2019.11, MATAMIKYA_ANY_AMOUNT, &basePrice, copyDouble,
+                  freeDouble, simplePrice);
+    basePrice = 5.8;
+    mtmNewProduct(mtm, 6, "Onion", 1789.75, MATAMIKYA_ANY_AMOUNT, &basePrice, copyDouble,
+                  freeDouble, buy10Get10ForFree);
+    basePrice = 2000;
+    mtmNewProduct(mtm, 10, "Television", 15, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice);
+    basePrice = 5000;
+    mtmNewProduct(mtm, 11, "Smart TV", 4, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice);
+    basePrice = 18.5;
+    mtmNewProduct(mtm, 7, "Watermelon", 24.5, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice);
+}
 
-//     unsigned int order1 = mtmCreateNewOrder(mtm);
-//     ASSERT_OR_DESTROY(order1 > 0);
-//     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-//                       mtmChangeProductAmountInOrder(mtm, order1, 11, 1.0));
-//     ASSERT_OR_DESTROY(MATAMIKYA_PRODUCT_NOT_EXIST ==
-//                       mtmChangeProductAmountInOrder(mtm, order1, 15, 1.0));
-//     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
-//                       mtmChangeProductAmountInOrder(mtm, order1, 11, 1.2));
+bool testModifyOrders() {
+    Matamikya mtm = matamikyaCreate();
+    makeInventory(mtm);
 
-//     unsigned int order2 = mtmCreateNewOrder(mtm);
-//     ASSERT_OR_DESTROY(order2 > 0);
-//     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-//                       mtmChangeProductAmountInOrder(mtm, order2, 6, 10.25));
-//     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-//                       mtmChangeProductAmountInOrder(mtm, order2, 7, 1.5));
-//     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmCancelOrder(mtm, order1));
-//     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-//                       mtmChangeProductAmountInOrder(mtm, order2, 10, 2.0));
-//     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmShipOrder(mtm, order2));
+    unsigned int order1 = mtmCreateNewOrder(mtm);
+    ASSERT_OR_DESTROY(order1 > 0);
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
+                      mtmChangeProductAmountInOrder(mtm, order1, 11, 1.0));
+    ASSERT_OR_DESTROY(MATAMIKYA_PRODUCT_NOT_EXIST ==
+                      mtmChangeProductAmountInOrder(mtm, order1, 15, 1.0));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+                      mtmChangeProductAmountInOrder(mtm, order1, 11, 1.2));
 
-//     matamikyaDestroy(mtm);
-//     return true;
-// }
+    unsigned int order2 = mtmCreateNewOrder(mtm);
+    ASSERT_OR_DESTROY(order2 > 0);
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
+                      mtmChangeProductAmountInOrder(mtm, order2, 6, 10.25));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
+                      mtmChangeProductAmountInOrder(mtm, order2, 7, 1.5));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmCancelOrder(mtm, order1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
+                      mtmChangeProductAmountInOrder(mtm, order2, 10, 2.0));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmShipOrder(mtm, order2));
 
-// static bool fileEqual(FILE *file1, FILE *file2) {
-//     int c1, c2;
-//     do {
-//         c1 = fgetc(file1);
-//         c2 = fgetc(file2);
-//     } while (c1 != EOF && c2 != EOF && c1 == c2);
-//     return (c1 == EOF && c2 == EOF);
-// }
+    matamikyaDestroy(mtm);
+    return true;
+}
 
-// static bool wholeFileEqual(const char *filename1, const char *filename2) {
-//     FILE *file1 = fopen(filename1, "r");
-//     FILE *file2 = fopen(filename2, "r");
-//     assert(file1);
-//     assert(file2);
-//     bool result = fileEqual(file1, file2);
-//     fclose(file1);
-//     fclose(file2);
-//     return result;
-// }
+static bool fileEqual(FILE *file1, FILE *file2) {
+    int c1, c2;
+    do {
+        c1 = fgetc(file1);
+        c2 = fgetc(file2);
+    } while (c1 != EOF && c2 != EOF && c1 == c2);
+    return (c1 == EOF && c2 == EOF);
+}
 
-// bool testPrintInventory() {
-//     Matamikya mtm = matamikyaCreate();
-//     makeInventory(mtm);
-//     FILE *outputFile = fopen(INVENTORY_OUT_FILE, "w");
-//     assert(outputFile);
-//     ASSERT_OR_DESTROY(mtmPrintInventory(mtm, outputFile) == MATAMIKYA_SUCCESS);
-//     fclose(outputFile);
-//     ASSERT_OR_DESTROY(wholeFileEqual(INVENTORY_TEST_FILE, INVENTORY_OUT_FILE));
-//     matamikyaDestroy(mtm);
-//     return true;
-// }
+static bool wholeFileEqual(const char *filename1, const char *filename2) {
+    FILE *file1 = fopen(filename1, "r");
+    FILE *file2 = fopen(filename2, "r");
+    assert(file1);
+    assert(file2);
+    bool result = fileEqual(file1, file2);
+    fclose(file1);
+    fclose(file2);
+    return result;
+}
+
+bool testPrintInventory() {
+    Matamikya mtm = matamikyaCreate();
+    makeInventory(mtm);
+    FILE *outputFile = fopen(INVENTORY_OUT_FILE, "w");
+    assert(outputFile);
+    ASSERT_OR_DESTROY(mtmPrintInventory(mtm, outputFile) == MATAMIKYA_SUCCESS);
+    fclose(outputFile);
+    ASSERT_OR_DESTROY(wholeFileEqual(INVENTORY_TEST_FILE, INVENTORY_OUT_FILE));
+    matamikyaDestroy(mtm);
+    return true;
+}
 
 // static unsigned int makeOrder(Matamikya mtm) {
 //     makeInventory(mtm);

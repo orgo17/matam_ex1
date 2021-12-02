@@ -72,9 +72,10 @@ MatamikyaAmountType getProductAmountType(ASElement product)
 
 ASElement copyProductId(ASElement product_id)
 {
-    ASElement product_id_copy = malloc(sizeof(product_id));
+    int *product_id_copy = malloc(sizeof(*product_id_copy));
     RETURN_IF_NULL(product_id_copy, NULL);
-    return product_id_copy;
+    *product_id_copy = *(int*)product_id;
+    return (ASElement)product_id_copy;
 }
 
 void freeProductId(ASElement product_id)
@@ -95,6 +96,10 @@ SetElement createOrder(const unsigned int id, CopyASElement product_id_copy_func
     order->id = id;
     order->products_ids = asCreate(product_id_copy_function, product_id_free_function,
                                     product_id_compare_function);
+    if(!order->products_ids){
+        free(order);
+        return NULL;
+    }
     return (SetElement)order;
 }
 
@@ -103,7 +108,7 @@ SetElement copyOrder(SetElement order)
     Order order_copy = malloc(sizeof(*order_copy));
     RETURN_IF_NULL(order_copy, NULL);
     order_copy->id = ((Order)order)->id;
-    order_copy->products_ids = ((Order)order)->products_ids;
+    order_copy->products_ids = asCopy(((Order)order)->products_ids);
     if(order_copy->products_ids == NULL){
         free(order_copy);
         return NULL;
@@ -113,7 +118,9 @@ SetElement copyOrder(SetElement order)
 
 void freeOrder(SetElement order)
 {
-    asDestroy((SetElement)((Order)order)->products_ids);
+    if(order != NULL){
+        asDestroy(((Order)order)->products_ids);
+    }
     free(order);
 }
 

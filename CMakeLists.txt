@@ -6,5 +6,5 @@ set(MTM_FLAGS_RELEASE "${MTM_FLAGS_DEBUG} -DNDEBUG")
 
 set(CMAKE_C_FLAGS ${MTM_FLAGS_DEBUG})
 
-add_executable(matamikya Wet/matamikya.c Wet/matamikya_help.c Wet/tests/matamikya_tests.c Wet/tests/matamikya_main.c)
+add_executable(matamikya Wet/matamikya.c Wet/matamikya_help.c Wet/tests/matamikya_tests.c Wet/tests/matamikya_main.c Wet/matamikya_print.c)
 target_link_libraries(matamikya ${CMAKE_SOURCE_DIR}/Wet/libas.a ${CMAKE_SOURCE_DIR}/Wet/libmtm.a)
