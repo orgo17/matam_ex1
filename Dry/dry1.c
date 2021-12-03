@@ -8,8 +8,8 @@ s should have a more meaningful name like str, and { should be a line below */
     assert(!s); //Coding error: Should not use assert to handle errors
     assert(times > 0); 
     int LEN = strlen(*s);/*Convention error: variable names in small laters
-    Coding error: strlen takes a single char instead of a string*/
-    char *out = malloc(LEN * times); //Coding error: Should use size of like so: malloc(sizeof(char)*LEN * times)
+    Coding Error: strlen should accept the string s and not *s */
+    char *out = malloc(LEN * times); //Coding error: no memory allocated for \0 at the end
     assert(out); //Coding error: Should not use assert to handle errors
     for (int i = 0; i < times; i++) { //Convention error: code inside loop should be indented 
     out = out + LEN; //Coding error: Should copy s to out before doing +LEN
@@ -26,7 +26,7 @@ char *stringDuplicator(char *str, int times)
     }
     assert(times > 0);
     int len = strlen(str);
-    char *out = malloc(sizeof(char)* len * times);
+    char *out = malloc((len * times)+1);
     if(!out){
         return NULL;
     }

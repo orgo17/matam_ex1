@@ -10,6 +10,8 @@ AS_EXEC = amount_set_str
 DEBUG_FLAG = # now empty, assign -g for debug
 COMP_FLAG = -std=c99 --pedantic-errors -Wall -Werror
 
+make_all : $(MTM_EXEC) $(AS_EXEC)
+
 $(MTM_EXEC) : $(MTM_OBJS)
 	$(CC) $(DEBUG_FLAG) $(MTM_OBJS) -o $@ $(MTM_LIB_FLAG)
 matamikya_help.o : matamikya_help.c matamikya.c matamikya_help.h matamikya.h set.h amount_set.h
@@ -24,7 +26,6 @@ matamikya_tests.o : matamikya_tests.c matamikya.c test_utilities.h matamikya_tes
 matamikya_main.o : matamikya_main.c matamikya_tests.c matamikya_tests.h test_utilities.h
 	$(CC) -c $(DEBUG_FLAG) $(COMP_FLAG) $*.c
 
-
 $(AS_EXEC) : $(AS_OBJS)	
 	$(CC) $(DEBUG_FLAG) $(AS_OBJS) -o $@
 amount_set_str.o : amount_set_str.c amount_set_str_list_str.c amount_set_str.h amount_set_str_list_str.h
@@ -32,7 +33,7 @@ amount_set_str.o : amount_set_str.c amount_set_str_list_str.c amount_set_str.h a
 amount_set_str_tests.o : amount_set_str_tests.c amount_set_str.c amount_set_str_list_str.c \
 						amount_set_str.h amount_set_str_list_str.h amount_set_str_tests.h
 	$(CC) -c $(DEBUG_FLAG) $(COMP_FLAG) $*.c
-amount_set_str_tests.o : amount_set_str_main.c amount_set_str_tests.c amount_set_str.c amount_set_str_list_str.c \
+amount_set_str_main.o : amount_set_str_main.c amount_set_str_tests.c amount_set_str.c amount_set_str_list_str.c \
 						amount_set_str.h amount_set_str_list_str.h amount_set_str_tests.h
 	$(CC) -c $(DEBUG_FLAG) $(COMP_FLAG) $*.c
 amount_set_str_list_str.o : amount_set_str_list_str.c amount_set_str_list_str.h

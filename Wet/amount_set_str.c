@@ -167,15 +167,5 @@ AmountSetResult asClear(AmountSet set)
     return AS_SUCCESS;
 }
 
-AmountSetResult asCompare(AmountSet set1, AmountSet set2, bool *result)
-{
-    if(set1 == NULL || set2 == NULL){
-        return AS_NULL_ARGUMENT;
-    }
-    if(listCompare(set1->items, set2->items, result) == LIST_NULL_ARGUMENT){
-        return AS_NULL_ARGUMENT;
-    }
-    return AS_SUCCESS;
-}
 
 

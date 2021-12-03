@@ -1,5 +1,15 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#define RETURN_IF_NULL(pointer, return_value)\
+        if(pointer == NULL){\
+            return return_value;\
+        }\
+
+#define CREATE_NEXT_AND_ADVANCE\
+        if(createNextNode(tmp,mergedOut) == MEMORY_ERROR){\
+            return MEMORY_ERROR;\
+        }\
+        tmp = tmp->next;\
 
 typedef struct node_t { 
     int x; 
@@ -14,34 +24,56 @@ typedef enum {
     NULL_ARGUMENT, 
 } ErrorCode; 
 
-//Originl functions 
+//Original functions 
 int getListLength(Node list); 
 bool isListSorted(Node list); 
 ErrorCode mergeSortedLists(Node list1, Node list2, Node *mergedOut);
 
 //New helper functions
-/*
-    Input: list1 - sorted linked list
-    list2 - sorted linked list
-    Output: returns True if list1 value is bigger than list2 value, and False otherwise
-*/
+/**
+ * check if Node list1 integer is bigger then Node list2 integer
+ * 
+ * @param list1 - first list to compare
+ * @param list2 - second list to compare
+ * @return
+ * true if Node list1 integer is bigger
+ * false if Node list2 integer is bigger
+ */
 bool isList1Bigger(Node list1, Node list2);
-/*
-    Input: tmp - temporary Node used to sbuild mergedOut
-    mergedOut - sorted linked list
-    Output: appropriate error code
-*/
+
+/**
+ * @brief Create a Next Node for mergedOut
+ * 
+ * @param tmp - Last node in mergedOut
+ * @param mergedOut - List that will contain merge of two sorted lists
+ * @return 
+ * MEMORY_ERROR in case of malloc error
+ * SUCCESS if the process was successful
+ */
 ErrorCode createNextNode(Node tmp, Node *mergedOut);
-/*
-    Input: list - pointer to a linked list
-    Function frees the memory allocated to the list
-*/
+
+/**
+ * @brief Frees the data allocated to list
+ * 
+ * @param list - list to be destroyed 
+ */
 void destroyList(Node *list);
+
+/**
+ * Adds the remaining numbers in list to merged 
+ * 
+ * @param list to add Nodes from
+ * @param tmp Node we want to insert the number into
+ * @param mergedOut The list that will contain the two merged lists
+ * @return
+ * MEMORY_ERROR in case of malloc error
+ * SUCCESS if the process was successful
+ */
+ErrorCode addRemainingToMerged(Node list, Node tmp, Node *mergedOut);
 
 //Function implementation:
 ErrorCode mergeSortedLists(Node list1, Node list2, Node *mergedOut)
 {   
-    mergedOut = NULL;
     if(!list1 || !list2){
         return EMPTY_LIST;
     }
@@ -49,14 +81,12 @@ ErrorCode mergeSortedLists(Node list1, Node list2, Node *mergedOut)
     {
         return UNSORTED_LIST;
     }
-    Node tmp = malloc(sizeof(Node));
-    if(!tmp){
-        return MEMORY_ERROR;
-    }
-    mergedOut = &tmp;
-    while(list1->next && list2->next)//add numbers to mergedOut
+    *mergedOut = malloc(sizeof(Node));
+    RETURN_IF_NULL(*mergedOut, MEMORY_ERROR);
+    Node tmp = *mergedOut;
+    while(list1 && list2)//add numbers to mergedOut
     {
-        if(isList1Bigger(list1, list2)){
+        if(!isList1Bigger(list1, list2)){
             tmp->x = list1->x;
             list1 = list1->next;
         }
@@ -64,23 +94,11 @@ ErrorCode mergeSortedLists(Node list1, Node list2, Node *mergedOut)
             tmp->x = list2->x;
             list2 = list2->next;
         }
-        if(createNextNode(tmp,mergedOut) == MEMORY_ERROR){
-            return MEMORY_ERROR;
-        }
+        CREATE_NEXT_AND_ADVANCE;
     }
-    while(list1->next){//add remaining numbers from list1 to mergedOut
-        tmp->x = list1->x;
-        if(createNextNode(tmp,mergedOut) == MEMORY_ERROR){
-            return MEMORY_ERROR;
-        }
-        list1 = list1->next;
-    }
-    while(list2->next){//add remaining numbers from list2 to mergedOut
-        tmp->x = list2->x;
-        if(createNextNode(tmp,mergedOut) == MEMORY_ERROR){
-            return MEMORY_ERROR;
-        }
-        list2 = list2->next;
+    if(addRemainingToMerged(list1, tmp, mergedOut) == MEMORY_ERROR || 
+        addRemainingToMerged(list2, tmp, mergedOut) == MEMORY_ERROR){
+        return MEMORY_ERROR;
     }
     return SUCCESS;
 }
@@ -111,4 +129,17 @@ ErrorCode createNextNode(Node tmp, Node *mergedOut)
     else{
         return SUCCESS;
     }
+}
+
+ErrorCode addRemainingToMerged(Node list, Node tmp, Node *mergedOut)
+{
+    while(list){ 
+        tmp->x = list->x;
+        if((list->next) != NULL)
+        {
+            CREATE_NEXT_AND_ADVANCE;
+        }
+        list = list->next;
+    }
+    return SUCCESS;
 }

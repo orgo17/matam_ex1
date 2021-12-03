@@ -1,5 +1,6 @@
 #include "amount_set_str.h"
 #include "amount_set_str_tests.h"
+#include "amount_set_str_list_str.h"
 #include <string.h>
 #include <stdlib.h>
 #define NAMES 3
@@ -24,6 +25,28 @@ static AmountSet amountSetCreateDemo()
         asChangeAmount(demo, names[i], DEMO_AMOUNT);
     }
     return demo;
+}
+
+static AmountSetResult asCompare(AmountSet set1, AmountSet set2, bool *result)
+{
+    *result = true;
+    if(set1 == NULL || set2 == NULL){
+        return AS_NULL_ARGUMENT;
+    }
+    char* list1 = asGetFirst(set1);
+    char* list2 = asGetFirst(set2);
+    while(list1 && list2){
+        if(strcmp(list1, list2) != 0){
+            *result = false;
+            return AS_SUCCESS;
+        }
+        list1 = asGetNext(set1);
+        list2 = asGetNext(set2);
+    }
+    if((!list1 && list2) || (list1 && !list2)){
+        *result = false;
+    }
+    return AS_SUCCESS;
 }
 
 bool testAmountSetCreateAndDestory()
