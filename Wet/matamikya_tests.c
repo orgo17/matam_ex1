@@ -1,19 +1,19 @@
 #include "matamikya_tests.h"
-#include "../matamikya.h"
+#include "matamikya.h"
 #include "test_utilities.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
-#define INVENTORY_OUT_FILE "../Wet/tests/printed_inventory.txt"
-#define INVENTORY_TEST_FILE "../Wet/tests/expected_inventory.txt"
-#define ORDER_OUT_FILE "../Wet/tests/printed_order.txt"
-#define ORDER_TEST_FILE "../Wet/tests/expected_order.txt"
-#define BEST_SELLING_OUT_FILE "../Wet/tests/printed_best_selling.txt"
-#define BEST_SELLING_TEST_FILE "../Wet/tests/expected_best_selling.txt"
-#define NO_SELLING_OUT_FILE "../Wet/tests/printed_no_selling.txt"
-#define NO_SELLING_TEST_FILE "../Wet/tests/expected_no_selling.txt"
+#define INVENTORY_OUT_FILE "printed_inventory.txt"
+#define INVENTORY_TEST_FILE "expected_inventory.txt"
+#define ORDER_OUT_FILE "printed_order.txt"
+#define ORDER_TEST_FILE "expected_order.txt"
+#define BEST_SELLING_OUT_FILE "printed_best_selling.txt"
+#define BEST_SELLING_TEST_FILE "expected_best_selling.txt"
+#define NO_SELLING_OUT_FILE "printed_no_selling.txt"
+#define NO_SELLING_TEST_FILE "expected_no_selling.txt"
 
 #define ASSERT_OR_DESTROY(expr) ASSERT_TEST_WITH_FREE((expr), matamikyaDestroy(mtm))
 

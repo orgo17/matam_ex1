@@ -133,12 +133,12 @@ MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const 
     ASElement product_to_add = createProduct(name, id, customData, amountType, copyData, freeData, prodPrice);
     RETURN_IF_NULL(product_to_add, MATAMIKYA_OUT_OF_MEMORY);
     AmountSetResult storage_register_result = asRegister(matamikya->storage, product_to_add);
-    freeProduct(product_to_add);
     AmountSetResult profit_register_result = 
                     asRegister(matamikya->profit, (ASElement)(&((Product)product_to_add)->id));
     assert(storage_register_result == AS_SUCCESS && profit_register_result == AS_SUCCESS);
     AmountSetResult storage_amount_result = asChangeAmount(matamikya->storage, product_to_add, amount);
     assert(storage_amount_result == AS_SUCCESS);
+    freeProduct(product_to_add);
     return MATAMIKYA_SUCCESS;
 }
 
@@ -319,8 +319,61 @@ MatamikyaResult mtmPrintInventory(Matamikya matamikya, FILE *output)
         unsigned int product_id = ((Product)iterator)->id;
         double product_amount = 0;
         asGetAmount(matamikya->storage, iterator, &product_amount);
-        const double product_price = ((Product)iterator)->product_data_get_price(((Product)iterator)->product_data,1.0);
+        const double product_price = 
+                    ((Product)iterator)->product_data_get_price(((Product)iterator)->product_data,1.0);
         mtmPrintProductDetails(product_name, product_id, product_amount, product_price, output);
+    }
+    return MATAMIKYA_SUCCESS;
+}
+
+MatamikyaResult mtmPrintOrder(Matamikya matamikya, const unsigned int orderId, FILE *output)
+{
+    RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
+    RETURN_IF_NULL(output, MATAMIKYA_NULL_ARGUMENT);
+    SetElement order_to_print = returnOrderById(matamikya, orderId);
+    RETURN_IF_NULL(order_to_print, MATAMIKYA_ORDER_NOT_EXIST);
+    mtmPrintOrderHeading(orderId, output);
+    double total_price = 0;
+    AS_FOREACH(ASElement, iterator, ((Order)order_to_print)->products_ids){
+        ASElement product_to_print = returnProductById(matamikya, matamikya->storage, *(int*)iterator);
+        char *product_name = ((Product)product_to_print)->name;
+        unsigned int product_id = ((Product)product_to_print)->id;
+        double product_amount_in_order;
+        asGetAmount(((Order)order_to_print)->products_ids, iterator, &product_amount_in_order);
+        const double product_price_in_order = 
+                    ((Product)product_to_print)->product_data_get_price(((Product)product_to_print)->product_data,
+                     product_amount_in_order);
+        mtmPrintProductDetails(product_name, product_id, product_amount_in_order, product_price_in_order, output);
+        total_price += product_price_in_order;
+    }
+    mtmPrintOrderSummary(total_price, output);
+    return MATAMIKYA_SUCCESS;
+}
+
+MatamikyaResult mtmPrintBestSelling(Matamikya matamikya, FILE *output)
+{
+    RETURN_IF_NULL(matamikya, MATAMIKYA_NULL_ARGUMENT);
+    RETURN_IF_NULL(output, MATAMIKYA_NULL_ARGUMENT);
+    fprintf(output, "Best Selling Product:\n");
+    double max_profit = 0, product_profit = 0;
+    AS_FOREACH(ASElement, iterator, matamikya->profit){
+        asGetAmount(matamikya->profit, iterator, &product_profit);
+        if(product_profit > max_profit){
+            max_profit = product_profit;
+        }
+    }
+    if(max_profit == 0){
+        fprintf(output, "none\n");
+        return MATAMIKYA_SUCCESS;
+    }
+    AS_FOREACH(ASElement, iterator, matamikya->profit){
+        asGetAmount(matamikya->profit, iterator, &product_profit);
+        if(product_profit == max_profit){
+            Product product_to_print = (Product)returnProductById(matamikya, matamikya->storage, *(int*)iterator);
+            char *product_name = (product_to_print)->name;
+            unsigned int product_id = (product_to_print)->id;
+            mtmPrintIncomeLine(product_name, product_id, max_profit, output);
+        }
     }
     return MATAMIKYA_SUCCESS;
 }

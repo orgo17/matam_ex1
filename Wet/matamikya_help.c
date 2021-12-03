@@ -8,7 +8,7 @@ ASElement createProduct(const char* name, const unsigned int id,
 {
     Product product = malloc(sizeof(*product));
     RETURN_IF_NULL(product, NULL);
-    product->name = malloc(sizeof(*name));
+    product->name = malloc(strlen(name)+1);
     if(product->name == NULL){
         free(product);
         return NULL;
@@ -32,7 +32,7 @@ ASElement copyProduct(ASElement product)
 {
     Product product_copy = malloc(sizeof(*product_copy));
     RETURN_IF_NULL(product_copy, NULL);
-    product_copy->name = malloc(sizeof(*(((Product)product)->name)));
+    product_copy->name = malloc(strlen(((Product)product)->name)+1);
     if(product_copy->name == NULL){
         free(product);
         return NULL;
@@ -85,7 +85,7 @@ void freeProductId(ASElement product_id)
 
 int compareProductId(ASElement product_id1, ASElement product_id2)
 {
-    return ((unsigned int*)product_id1) - ((unsigned int*)product_id2);
+    return (*(unsigned int*)product_id1) - (*(unsigned int*)product_id2);
 }
 
 SetElement createOrder(const unsigned int id, CopyASElement product_id_copy_function, 
