@@ -1,0 +1,6 @@
+Order 1 Details:
+name: Watermelon, id: 7, amount: 1.500, price: 27.750
+name: Ps5, id: 20, amount: 4000.000, price: 32000000.000
+name: Xbox_one, id: 21, amount: 4000.000, price: 32000000.000
+----------
+Total Price: 64000027.750
