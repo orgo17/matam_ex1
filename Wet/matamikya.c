@@ -148,7 +148,11 @@ MatamikyaResult mtmChangeProductAmount(Matamikya matamikya, const unsigned int i
     if(!isProductInStorage(matamikya, id)){
         return MATAMIKYA_PRODUCT_NOT_EXIST;
     }
-    if(!isAmountConsistent(amount, getProductAmountType(returnProductById(matamikya, id)))){
+    Product product_to_change = ((Product)(returnProductById(matamikya, id)));
+    double product_amount_in_storage = 0;
+    asGetAmount(matamikya->storage, (ASElement)(product_to_change), &product_amount_in_storage);
+    if(!isAmountConsistent(amount, product_to_change->amount_type) ||
+        !isAmountConsistent(amount + product_amount_in_storage, product_to_change->amount_type)){
         return MATAMIKYA_INVALID_AMOUNT;
     }
     AmountSetResult change_amount_in_storage_result = 
@@ -234,13 +238,17 @@ MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigne
     if(!isProductInStorage(matamikya, productId)){
         return MATAMIKYA_PRODUCT_NOT_EXIST;
     }
-    ASElement product_to_change = returnProductById(matamikya, productId);
+    //Get the product amount type and product amount in order
+    Product product_to_change = (Product)returnProductById(matamikya, productId);
     assert(product_to_change);
-    if(!isAmountConsistent(amount, ((Product)product_to_change)->amount_type)){
-        return MATAMIKYA_INVALID_AMOUNT;
-    }
     AmountSet products_in_order = ((Order)(returnOrderById(matamikya, orderId)))->products_ids;
     ASElement product_id_to_change_amount = returnAsElementIdById(products_in_order, productId);
+    double product_amount_in_order = 0;
+    asGetAmount(products_in_order, product_id_to_change_amount, &product_amount_in_order);
+    if(!isAmountConsistent(amount, product_to_change->amount_type) ||
+        !isAmountConsistent(amount + product_amount_in_order, product_to_change->amount_type)){
+        return MATAMIKYA_INVALID_AMOUNT;
+    }
     AmountSetResult as_change_amount_result = asChangeAmount(products_in_order, product_id_to_change_amount, amount);
     //check if product in order
     if(as_change_amount_result == AS_NULL_ARGUMENT && amount>0){
@@ -282,6 +290,7 @@ MatamikyaResult mtmShipOrder(Matamikya matamikya, const unsigned int orderId)
     if(!isEnoughInStorage(matamikya, order)){
         return MATAMIKYA_INSUFFICIENT_AMOUNT;
     }
+    //Removes the neccessary products from the storage, and calculates profit
     AS_FOREACH(ASElement, iterator, ((Order)order)->products_ids){
         int product_id = *(int*)iterator;
         double amount_in_order;
@@ -353,16 +362,19 @@ MatamikyaResult mtmPrintBestSelling(Matamikya matamikya, FILE *output)
     RETURN_IF_NULL(output, MATAMIKYA_NULL_ARGUMENT);
     fprintf(output, "Best Selling Product:\n");
     double max_profit = 0, product_profit = 0;
+    //find max profit of product from storage
     AS_FOREACH(ASElement, iterator, matamikya->profit){
         asGetAmount(matamikya->profit, iterator, &product_profit);
         if(product_profit > max_profit){
             max_profit = product_profit;
         }
     }
+    //If no orders were shipped yet
     if(max_profit == 0){
         fprintf(output, "none\n");
         return MATAMIKYA_SUCCESS;
     }
+    //Print best selling
     AS_FOREACH(ASElement, iterator, matamikya->profit){
         asGetAmount(matamikya->profit, iterator, &product_profit);
         if(product_profit == max_profit){

@@ -78,9 +78,14 @@ bool testModifyProducts() {
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
                       mtmNewProduct(mtm, 11, "Television", 4, MATAMIKYA_INTEGER_AMOUNT,
                                     &basePrice, copyDouble, freeDouble, simplePrice));
+    basePrice = 10;
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
+                      mtmNewProduct(mtm, 12, "Puzzle", 0.9999, MATAMIKYA_INTEGER_AMOUNT,
+                                    &basePrice, copyDouble, freeDouble, simplePrice));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmClearProduct(mtm, 6));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm, 4, 30.5));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm, 12, 0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm, 4, -12.85));
     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm, 10, 2.25));
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm, 10, -1000));
@@ -130,6 +135,10 @@ bool testModifyOrders() {
                       mtmChangeProductAmountInOrder(mtm, order1, 15, 1.0));
     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
                       mtmChangeProductAmountInOrder(mtm, order1, 11, 1.2));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
+                      mtmChangeProductAmountInOrder(mtm, order1, 4, 0.9999));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
+                      mtmChangeProductAmountInOrder(mtm, order1, 4, 0.9999));
 
     unsigned int order2 = mtmCreateNewOrder(mtm);
     ASSERT_OR_DESTROY(order2 > 0);

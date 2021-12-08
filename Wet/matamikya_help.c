@@ -65,11 +65,6 @@ int compareProduct(ASElement product1, ASElement product2)
     return ((Product)product1)->id - ((Product)product2)->id;
 }
 
-MatamikyaAmountType getProductAmountType(ASElement product)
-{
-    return ((Product)product)->amount_type;
-}
-
 ASElement copyProductId(ASElement product_id)
 {
     int *product_id_copy = malloc(sizeof(*product_id_copy));
