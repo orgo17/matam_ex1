@@ -10,7 +10,6 @@ AS_EXEC = amount_set_str
 DEBUG_FLAG = # now empty, assign -g for debug
 COMP_FLAG = -std=c99 --pedantic-errors -Wall -Werror
 
-make_all : $(MTM_EXEC) $(AS_EXEC)
 
 $(MTM_EXEC) : $(MTM_OBJS)
 	$(CC) $(DEBUG_FLAG) $(MTM_OBJS) -o $@ $(MTM_LIB_FLAG)
