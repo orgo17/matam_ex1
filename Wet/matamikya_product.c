@@ -1,5 +1,17 @@
-#include "matamikya_help.h"
+#include "matamikya_product.h"
+#include <stdlib.h>
 #include <string.h>
+
+struct product_t
+{
+    char* name;
+    unsigned int id;
+    MtmProductData product_data;
+    MtmCopyData product_data_copy_function;
+    MtmFreeData product_data_free_function;
+    MtmGetProductPrice product_data_get_price;
+    MatamikyaAmountType amount_type;
+};
 
 ASElement createProduct(const char* name, const unsigned int id, 
                         MtmProductData product_data, MatamikyaAmountType amount_type,
@@ -65,61 +77,27 @@ int compareProduct(ASElement product1, ASElement product2)
     return ((Product)product1)->id - ((Product)product2)->id;
 }
 
-ASElement copyProductId(ASElement product_id)
+unsigned int getProductId(ASElement product)
 {
-    int *product_id_copy = malloc(sizeof(*product_id_copy));
-    RETURN_IF_NULL(product_id_copy, NULL);
-    *product_id_copy = *(int*)product_id;
-    return (ASElement)product_id_copy;
+    return ((Product)product)->id;
 }
 
-void freeProductId(ASElement product_id)
+void setProductId(ASElement product, unsigned int id)
 {
-    free(product_id);
+    ((Product)product)->id = id;
 }
 
-int compareProductId(ASElement product_id1, ASElement product_id2)
+char* getProductName(ASElement product)
 {
-    return (*(unsigned int*)product_id1) - (*(unsigned int*)product_id2);
+    return ((Product)product)->name;
 }
 
-SetElement createOrder(const unsigned int id, CopyASElement product_id_copy_function, 
-                        FreeASElement product_id_free_function, CompareASElements product_id_compare_function)
+MatamikyaAmountType getProductAmountType(ASElement product)
 {
-    Order order = malloc(sizeof(*order));
-    RETURN_IF_NULL(order, NULL);
-    order->id = id;
-    order->products_ids = asCreate(product_id_copy_function, product_id_free_function,
-                                    product_id_compare_function);
-    if(!order->products_ids){
-        free(order);
-        return NULL;
-    }
-    return (SetElement)order;
+    return ((Product)product)->amount_type;
 }
 
-SetElement copyOrder(SetElement order)
+double calculateProductProfit(ASElement product, double amount)
 {
-    Order order_copy = malloc(sizeof(*order_copy));
-    RETURN_IF_NULL(order_copy, NULL);
-    order_copy->id = ((Order)order)->id;
-    order_copy->products_ids = asCopy(((Order)order)->products_ids);
-    if(order_copy->products_ids == NULL){
-        free(order_copy);
-        return NULL;
-    }
-    return (SetElement)order_copy;
-}
-
-void freeOrder(SetElement order)
-{
-    if(order != NULL){
-        asDestroy(((Order)order)->products_ids);
-    }
-    free(order);
-}
-
-int compareOrder(SetElement order1, SetElement order2)
-{
-    return ((Order)order1)->id - ((Order)order2)->id;
+    return ((Product)product)->product_data_get_price(((Product)product)->product_data, amount);
 }
