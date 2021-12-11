@@ -55,6 +55,13 @@ void setProductId(ASElement product, unsigned int id);
 char* getProductName(ASElement product);
 MatamikyaAmountType getProductAmountType(ASElement product);
 
+/**
+ * @brief Calculates the profit made from selling the given product at the given amount
+ * 
+ * @param product - product to sell
+ * @param amount - amount of product
+ * @return Profit made from the sell
+ */
 double calculateProductProfit(ASElement product, double amount);
 
 #define RETURN_IF_NULL(pointer, return_value)\
