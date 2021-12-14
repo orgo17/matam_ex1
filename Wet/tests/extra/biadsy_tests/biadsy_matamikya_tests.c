@@ -3,11 +3,11 @@
 //
 
 #include "../../../matamikya.h"
+#include "../../../matamikya_tests.h"
 #include "test_utilities.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdlib.h>
 
 #define INVENTORY_OUT_FILE "../Wet/tests/extra/biadsy_tests/actual_output/printed_inventory.txt"
 #define INVENTORY_TEST_FILE "../Wet/tests/extra/biadsy_tests/expected_output/expected_inventory.txt"
@@ -15,6 +15,8 @@
 #define INVENTORY_TEST_FILE_1 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintInventory_1.txt"
 #define INVENTORY_OUT_FILE_2 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_2.txt"
 #define INVENTORY_TEST_FILE_2 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintInventory_2.txt"
+#define INVENTORY_OUT_FILE_3 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_3.txt"
+#define INVENTORY_TEST_FILE_3 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintInventory_3.txt"
 #define ORDER_OUT_FILE "../Wet/tests/extra/biadsy_tests/actual_output/printed_order.txt"
 #define ORDER_TEST_FILE "../Wet/tests/extra/biadsy_tests/expected_output/expected_order.txt"
 #define ORDER_OUT_FILE_1 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintOrder_1.txt"
@@ -27,6 +29,8 @@
 #define ORDER_TEST_FILE_4 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintOrder_4.txt"
 #define ORDER_OUT_FILE_5 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintOrder_5.txt"
 #define ORDER_TEST_FILE_5 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintOrder_5.txt"
+#define ORDER_OUT_FILE_6 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintOrder_6.txt"
+#define ORDER_TEST_FILE_6 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintOrder_6.txt"
 #define BEST_SELLING_OUT_FILE "../Wet/tests/extra/biadsy_tests/actual_output/printed_best_selling.txt"
 #define BEST_SELLING_TEST_FILE "../Wet/tests/extra/biadsy_tests/expected_output/expected_best_selling.txt"
 #define BEST_SELLING_OUT_FILE_1 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintBestSelling_1.txt"
@@ -39,10 +43,14 @@
 #define BEST_SELLING_TEST_FILE_4 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintBestSelling_4.txt"
 #define BEST_SELLING_OUT_FILE_5 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintBestSelling_5.txt"
 #define BEST_SELLING_TEST_FILE_5 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintBestSelling_5.txt"
+#define BEST_SELLING_OUT_FILE_6 "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintBestSelling_6.txt"
+#define BEST_SELLING_TEST_FILE_6 "../Wet/tests/extra/biadsy_tests/expected_output/testMtmPrintBestSelling_6.txt"
 #define NO_SELLING_OUT_FILE "../Wet/tests/extra/biadsy_tests/actual_output/printed_no_selling.txt"
 #define NO_SELLING_TEST_FILE "../Wet/tests/extra/biadsy_tests/expected_output/expected_no_selling.txt"
 #define NO_SELLING_OUT_FILE_1 "../Wet/tests/extra/biadsy_tests/actual_output/printed_no_selling_1.txt"
 #define NO_SELLING_TEST_FILE_1 "../Wet/tests/extra/biadsy_tests/expected_output/expected_no_selling_1.txt"
+#define REMOVE_NULL_FILE "rm ../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrint_null.txt"
+#define CREATE_NULL_FILE "../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrint_null.txt"
 
 
 #define ASSERT_OR_DESTROY(expr) ASSERT_TEST_WITH_FREE((expr), matamikyaDestroy(mtm))
@@ -507,6 +515,46 @@ bool testMtmNewProduct() {
     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
     mtmNewProduct(mtm, 7, "iphone", -5, MATAMIKYA_ANY_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.6, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 2.7, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.2, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.4, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.2, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.8, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.9, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 2.2, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 2.1, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.03, MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.04, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 0.9, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT ==
+    mtmNewProduct(mtm, 7, "iphone", 1.05, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+                  copyDouble, freeDouble, simplePrice));
+
 
     ASSERT_OR_DESTROY(MATAMIKYA_PRODUCT_ALREADY_EXIST ==
     mtmNewProduct(mtm, 7, "iphone", 1.501, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
@@ -573,16 +621,16 @@ bool testMtmChangeProductAmount() {
     mtmNewProduct(mtm, 115, "Red Bull", 1.001, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 116, "Monster", 1.999-1, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 116, "Monster", 0.9999, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
     mtmNewProduct(mtm, 121, "Magnum White",12 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 122, "Magnum Black",12.001 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 122, "Magnum Black",12.000 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 123, "Magnum classic",11.999 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 123, "Magnum classic",11.9999 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
 
 
@@ -606,16 +654,19 @@ bool testMtmChangeProductAmount() {
     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm, 90,0.5011));
     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm, 90,2.50101));
 
+    /*checks segel update*/
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm,115, 1.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm,1000, 1.499));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm,90, 1.501));
 
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,121, -13));
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,122, -13));
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,123, -23));
-    ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,121, -13.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,121, -113.0001));
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,116, -1.5));
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,115, -2.00));
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,115, -3.00));
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmChangeProductAmount(mtm,114, -3.999));
-    
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,4, -12));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,4, 12));
@@ -624,29 +675,29 @@ bool testMtmChangeProductAmount() {
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,7, 1.5));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,7, -1.0002));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,7, -1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,7, -(1.999-1)));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,7, -0.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,7, -0.9999));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,7, -0.0001));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,1000, -1.499));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,1000, 15));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, 1112));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, -12.5));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, -13.501+1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, -13.499+1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, -12.501));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, -12.499));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, 12.5));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, 15.501-1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, 14.499-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, 14.500));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,115, 113.4999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,116, 120.5));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,116, 0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,116, 1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,116, 0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,116, 0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,116, 3));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,4, 0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, 5000));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, -13.001+1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, -14.999+1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, -112.000));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, -113.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, -122));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, 1222.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, 15.999-2));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, 1222.000));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,122, 13.999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,123, 122));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,123, 0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmount(mtm,121, 0));
@@ -695,7 +746,7 @@ bool testMtmClearProduct() {
     mtmNewProduct(mtm, 115, "Red Bull", 1.001, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 116, "Monster", 1.999-1, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 116, "Monster", 0.9999, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
     mtmNewProduct(mtm, 121, "Magnum White",12 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
@@ -810,14 +861,19 @@ bool testMtmChangeProductAmountInOrder() {
     order_3 = mtmCreateNewOrder(mtm);
 
 
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+
+
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmChangeProductAmountInOrder(NULL, 1,4,4));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmChangeProductAmountInOrder(NULL, 2,7,5));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmChangeProductAmountInOrder(NULL, 3,6,9));
 
 
-    /*ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmChangeProductAmountInOrder(mtm, 0,4,4));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmChangeProductAmountInOrder(mtm, 4,4,4));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmChangeProductAmountInOrder(mtm, 5,4,4));*/
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmChangeProductAmountInOrder(mtm, 0,4,4));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmChangeProductAmountInOrder(mtm, -4,4,4));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmChangeProductAmountInOrder(mtm, -5,4,4));
 
 
     ASSERT_OR_DESTROY(MATAMIKYA_PRODUCT_NOT_EXIST == mtmChangeProductAmountInOrder(mtm, order_1,5,4));
@@ -847,7 +903,13 @@ bool testMtmChangeProductAmountInOrder() {
     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmountInOrder(mtm, order_2,122,0.4989));
     ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmountInOrder(mtm, order_3,121,0.0011));
 
+    /*checks segel update*/
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm,115, 1.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm,123, 1.999));
+    ASSERT_OR_DESTROY(MATAMIKYA_INVALID_AMOUNT == mtmChangeProductAmount(mtm,116, 1.499));
 
+
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,4,-200));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,4,0.502));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,4,0.4989));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,4,0.0011));
@@ -855,17 +917,17 @@ bool testMtmChangeProductAmountInOrder() {
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,4,50.4789));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,4,70.0011));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,4,0));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,1.501-1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,1.499-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,1.5009));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,0.4999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,111,0.500));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,-(1.501-1)));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,-(1.499-1)));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,-0.5009));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,-0.4999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,111,-0.500));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,111,0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,-0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,-1.999+1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,-0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,111,-1));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,0.5001));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,0.4999));
@@ -874,17 +936,17 @@ bool testMtmChangeProductAmountInOrder() {
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,111,4));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,111,-7));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,0));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,114,1.501-1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,1.499-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,114,0.5009));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,0.4999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,114,0.500));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,114,-1.501+1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,-1.499+1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,114,-0.5009));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,-0.4999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,114,-0.500));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,114,0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,114,0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,114,-0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,-1.999+1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,-0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,114,-1));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,114,0.5001));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,0.4999));
@@ -894,10 +956,10 @@ bool testMtmChangeProductAmountInOrder() {
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,114,-15));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,114,0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,123,0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,123,1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,123,0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,123,0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,123,-0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,123,-1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,123,-2.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,123,-1));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,123,0.000999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,123,1));
@@ -905,10 +967,10 @@ bool testMtmChangeProductAmountInOrder() {
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,123,-27));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,123,0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,121,0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,121,1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,121,0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,121,0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,121,-0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,121,-1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,121,-2.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,121,-1));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,121,0.000999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,121,1));
@@ -956,28 +1018,34 @@ bool testMtmShipOrder() {
     order_4 = mtmCreateNewOrder(mtm);
 
 
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+    ASSERT_OR_DESTROY(0 < order_4);
+
+
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmShipOrder(NULL, order_1));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmShipOrder(NULL, order_2));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmShipOrder(NULL, order_3));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmShipOrder(NULL, order_4));
 
 
-    /*ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, 0));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, 5));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, 6));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, 7));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, 1000));*/
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, 0));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, -5));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, -6));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, -7));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, -1000));
 
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,4,0.502));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,6,0.4989));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,10,0.001));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,11,1011));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,1.501-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,0.5009));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,4,6));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,6,2));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,11,1.0009));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,0.001));
 
@@ -1015,15 +1083,21 @@ bool testMtmShipOrder() {
     order_4 = mtmCreateNewOrder(mtm);
 
 
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+    ASSERT_OR_DESTROY(0 < order_4);
+
+
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,4,0.502));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,6,0.4989));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,10,0.001));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,11,0));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,1.501-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,0.5009));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,4,6));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,6,2));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,1.999-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,0.9999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,11,5.0009));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,0.001));
 
@@ -1041,7 +1115,7 @@ bool testMtmShipOrder() {
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmShipOrder(mtm, order_3));
 
-    //ASSERT_OR_DESTROY(3 == mtmCreateNewOrder(mtm));
+    ASSERT_OR_DESTROY(0 < mtmCreateNewOrder(mtm));
     ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmShipOrder(mtm, order_3));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmShipOrder(mtm, order_4));
@@ -1091,17 +1165,23 @@ bool testMtmCancelOrder() {
     order_4 = mtmCreateNewOrder(mtm);
 
 
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+    ASSERT_OR_DESTROY(0 < order_4);
+
+
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmCancelOrder(NULL, order_1));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmCancelOrder(NULL, order_2));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmCancelOrder(NULL, order_3));
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmCancelOrder(NULL, order_4));
 
 
-    /*ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, 0));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, 20));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, 500));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, 777));
-    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, 10001));*/
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, 0));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, -20));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, -500));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, -777));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, -10001));
 
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmCancelOrder(mtm, order_1));
@@ -1121,29 +1201,35 @@ bool testMtmCancelOrder() {
     order_3 = mtmCreateNewOrder(mtm);
     order_4 = mtmCreateNewOrder(mtm);
 
+
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+    ASSERT_OR_DESTROY(0 < order_4);
+
     
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,4,0.502));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,6,0.499));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,10,0.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,10,-1));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,11,1011));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,1.501-1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,0.500));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,4,0.501));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,6,1.002));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,1.999-1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,11,1.0009));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,0.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,11,1.000));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,0));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,4,50));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,6,700.1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,10,3.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,11,14.9991));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,10,3.000));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,11,14.000));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,90,0.9991));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,4,0.502));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,6,0.4989));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,10,4.0001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,11,0.00001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,10,4.000));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,11,1));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,90,1));
 
 
@@ -1188,13 +1274,13 @@ bool testMtmCancelOrder() {
 
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmShipOrder(mtm, order_3));
-    ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmShipOrder(mtm, order_4));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmShipOrder(mtm, order_4));
 
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmCancelOrder(mtm, order_1));
     ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, order_2));
     ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, order_3));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmCancelOrder(mtm, order_4));
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmCancelOrder(mtm, order_4));
 
 
     matamikyaDestroy(mtm);
@@ -1204,11 +1290,11 @@ bool testMtmCancelOrder() {
 bool testMtmPrintInventory() {
     Matamikya mtm = matamikyaCreate();
 
-    FILE *outputFile = fopen("../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_null.txt", "w");
+    FILE *outputFile = fopen(CREATE_NULL_FILE, "w");
     assert(outputFile);
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmPrintInventory(NULL,outputFile));
     fclose(outputFile);
-    system("rm ./../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_null.txt");
+    system(REMOVE_NULL_FILE);
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmPrintInventory(mtm,NULL));
 
 
@@ -1285,6 +1371,16 @@ bool testMtmPrintInventory() {
     ASSERT_OR_DESTROY(wholeFileEqual(INVENTORY_TEST_FILE_2, INVENTORY_OUT_FILE_2));
 
 
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmClearProduct(mtm, 11));
+
+
+    outputFile = fopen(INVENTORY_OUT_FILE_3, "w");
+    assert(outputFile);
+    ASSERT_OR_DESTROY(mtmPrintInventory(mtm, outputFile) == MATAMIKYA_SUCCESS);
+    fclose(outputFile);
+    ASSERT_OR_DESTROY(wholeFileEqual(INVENTORY_TEST_FILE_3, INVENTORY_OUT_FILE_3));
+
+
     matamikyaDestroy(mtm);
     return true;
 }
@@ -1292,11 +1388,16 @@ bool testMtmPrintInventory() {
 bool testMtmPrintOrder() {
     Matamikya mtm = matamikyaCreate();
 
-    FILE *outputFile = fopen("../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_null.txt", "w");
+    FILE *outputFile = fopen(CREATE_NULL_FILE, "w");
     assert(outputFile);
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmPrintOrder(NULL,1,outputFile));
     fclose(outputFile);
-    system("rm ./../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_null.txt");
+    system(REMOVE_NULL_FILE);
+    outputFile = fopen(CREATE_NULL_FILE, "w");
+    assert(outputFile);
+    ASSERT_OR_DESTROY(MATAMIKYA_ORDER_NOT_EXIST == mtmPrintOrder(mtm,1,outputFile));
+    fclose(outputFile);
+    system(REMOVE_NULL_FILE);
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmPrintOrder(mtm,1,NULL));
 
 
@@ -1364,28 +1465,34 @@ bool testMtmPrintOrder() {
     order_4 = mtmCreateNewOrder(mtm);
 
 
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+    ASSERT_OR_DESTROY(0 < order_4);
+
+
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,4,0.7));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,6,1.3));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,10,0.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,10,1));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,11,1011));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,1.501));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,90,1.500));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,4,6));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,6,2));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,1.999));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,2));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,11,1.000));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,0.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,2.5));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,4,50));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,6,700.1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,10,3.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,10,3.00));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,11,14.999));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,90,1.5));
     
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,4,0.5));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,6,0.4));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,10,4.000));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,11,0.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,11,0));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,90,1));
 
     outputFile = fopen(ORDER_OUT_FILE_1, "w");
@@ -1426,10 +1533,8 @@ bool testMtmPrintOrder() {
     assert(printed);
 
     /* test that prefix and printed orderId is correct */
-    const char *expectedPrefix1 = "Order ";
-    size = strlen(expectedPrefix);
     for (int i = 0; i < size; ++i) {
-        ASSERT_OR_DESTROY(fgetc(printed) == expectedPrefix1[i]);
+        ASSERT_OR_DESTROY(fgetc(printed) == expectedPrefix[i]);
     }
     
     fscanf(printed, "%u", &printedId);
@@ -1454,10 +1559,8 @@ bool testMtmPrintOrder() {
     assert(printed);
 
     /* test that prefix and printed orderId is correct */
-    const char *expectedPrefix2 = "Order ";
-    size = strlen(expectedPrefix);
     for (int i = 0; i < size; ++i) {
-        ASSERT_OR_DESTROY(fgetc(printed) == expectedPrefix2[i]);
+        ASSERT_OR_DESTROY(fgetc(printed) == expectedPrefix[i]);
     }
 
     fscanf(printed, "%u", &printedId);
@@ -1482,10 +1585,37 @@ bool testMtmPrintOrder() {
     assert(printed);
 
     /* test that prefix and printed orderId is correct */
-    const char *expectedPrefix3 = "Order ";
-    size = strlen(expectedPrefix);
     for (int i = 0; i < size; ++i) {
-        ASSERT_OR_DESTROY(fgetc(printed) == expectedPrefix3[i]);
+        ASSERT_OR_DESTROY(fgetc(printed) == expectedPrefix[i]);
+    }
+
+    fscanf(printed, "%u", &printedId);
+    ASSERT_OR_DESTROY(order_4 == printedId);
+
+    /* skip the rest of the header line */
+    while (fgetc(printed) != '\n');
+    while (fgetc(expected) != '\n');
+
+    ASSERT_OR_DESTROY(fileEqual(expected, printed));
+    fclose(expected);
+    fclose(printed);
+
+
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmClearProduct(mtm, 90));
+
+
+    outputFile = fopen(ORDER_OUT_FILE_6, "w");
+    assert(outputFile);
+    ASSERT_OR_DESTROY(mtmPrintOrder(mtm,order_4, outputFile) == MATAMIKYA_SUCCESS);
+    fclose(outputFile);
+    expected = fopen(ORDER_TEST_FILE_6, "r");
+    printed = fopen(ORDER_OUT_FILE_6, "r");
+    assert(expected);
+    assert(printed);
+
+    /* test that prefix and printed orderId is correct */
+    for (int i = 0; i < size; ++i) {
+        ASSERT_OR_DESTROY(fgetc(printed) == expectedPrefix[i]);
     }
 
     fscanf(printed, "%u", &printedId);
@@ -1507,11 +1637,11 @@ bool testMtmPrintOrder() {
 bool testMtmPrintBestSelling() {
     Matamikya mtm = matamikyaCreate();
 
-    FILE *outputFile = fopen("../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_null.txt", "w");
+    FILE *outputFile = fopen(CREATE_NULL_FILE, "w");
     assert(outputFile);
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmPrintBestSelling(NULL,outputFile));
     fclose(outputFile);
-    system("rm ./../Wet/tests/extra/biadsy_tests/actual_output/testMtmPrintInventory_null.txt");
+    system(REMOVE_NULL_FILE);
     ASSERT_OR_DESTROY(MATAMIKYA_NULL_ARGUMENT == mtmPrintBestSelling(mtm,NULL));
 
 
@@ -1537,11 +1667,11 @@ bool testMtmPrintBestSelling() {
                   copyDouble, freeDouble, simplePrice));
     basePrice = 5200;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 90, "Iphone", 2.501, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 90, "Iphone", 2.50, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     basePrice = 3;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 1000, "Melki", 15.499, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 1000, "Melki", 15.5, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     basePrice = 520.7;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
@@ -1553,11 +1683,11 @@ bool testMtmPrintBestSelling() {
                   copyDouble, freeDouble, simplePrice));
     basePrice = 7000.001;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 115, "Red Bull", 19.0002, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 115, "Red Bull", 19.000, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     basePrice = 123;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 116, "Monster", 11.999, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 116, "Monster", 17.5, MATAMIKYA_HALF_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     basePrice = 566666.90;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
@@ -1565,11 +1695,11 @@ bool testMtmPrintBestSelling() {
                   copyDouble, freeDouble, simplePrice));
     basePrice = 4444.4444;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 122, "Magnum Black",12.001 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 122, "Magnum Black",12.00 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
     basePrice = 123;
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS ==
-    mtmNewProduct(mtm, 123, "Magnum classic",11.999 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
+    mtmNewProduct(mtm, 123, "Magnum classic",13 , MATAMIKYA_INTEGER_AMOUNT, &basePrice,
                   copyDouble, freeDouble, simplePrice));
 
 
@@ -1580,6 +1710,12 @@ bool testMtmPrintBestSelling() {
     order_4 = mtmCreateNewOrder(mtm);
 
 
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+    ASSERT_OR_DESTROY(0 < order_4);
+
+
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,4,0.502));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,6,0.4989));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,10,0.001));
@@ -1588,21 +1724,21 @@ bool testMtmPrintBestSelling() {
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,4,6));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,6,2));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,0.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,11,0.0009));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,1.001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,0));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,11,1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,90,1.5));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,4,50));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,6,700.1));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,10,14.999));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,11,3.001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,90,0.9991));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,10,15));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,11,3.00));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,90,1));
     
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,4,0.502));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,6,0.4989));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,10,4.0001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,11,0.00001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,90,1));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,10,4.00));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,11,0));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_4,90,1.5));
 
 
     outputFile = fopen(NO_SELLING_OUT_FILE_1 , "w");
@@ -1642,6 +1778,12 @@ bool testMtmPrintBestSelling() {
     order_4 = mtmCreateNewOrder(mtm);
 
 
+    ASSERT_OR_DESTROY(0 < order_1);
+    ASSERT_OR_DESTROY(0 < order_2);
+    ASSERT_OR_DESTROY(0 < order_3);
+    ASSERT_OR_DESTROY(0 < order_4);
+
+
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,7,15));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,1000,15));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_1,111,15));
@@ -1650,8 +1792,8 @@ bool testMtmPrintBestSelling() {
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,116,8.001));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,121,6));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,122,7.0001));
-    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,123,7.0001));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,122,7.000));
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,123,7.000));
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_2,10,0));
 
     ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmChangeProductAmountInOrder(mtm, order_3,4,50));
@@ -1679,6 +1821,14 @@ bool testMtmPrintBestSelling() {
     ASSERT_OR_DESTROY(mtmPrintBestSelling(mtm,outputFile) == MATAMIKYA_SUCCESS);
     fclose(outputFile);
     ASSERT_OR_DESTROY(wholeFileEqual(BEST_SELLING_TEST_FILE_4, BEST_SELLING_OUT_FILE_4));
+
+    ASSERT_OR_DESTROY(MATAMIKYA_SUCCESS == mtmClearProduct(mtm, 121));
+
+    outputFile = fopen(BEST_SELLING_OUT_FILE_6, "w");
+    assert(outputFile);
+    ASSERT_OR_DESTROY(mtmPrintBestSelling(mtm,outputFile) == MATAMIKYA_SUCCESS);
+    fclose(outputFile);
+    ASSERT_OR_DESTROY(wholeFileEqual(BEST_SELLING_TEST_FILE_6, BEST_SELLING_OUT_FILE_6));
 
 
     ASSERT_OR_DESTROY(MATAMIKYA_INSUFFICIENT_AMOUNT == mtmShipOrder(mtm, order_3));

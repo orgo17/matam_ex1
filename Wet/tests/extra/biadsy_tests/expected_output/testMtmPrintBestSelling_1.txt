@@ -1,2 +1,2 @@
 Best Selling Product:
-name: Iphone, id: 90, total income: 5205.200
+name: Iphone, id: 90, total income: 7800.000

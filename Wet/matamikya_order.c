@@ -76,4 +76,3 @@ AmountSet getOrderProductIds(SetElement order)
 {
     return ((Order)order)->products_ids;
 }
-

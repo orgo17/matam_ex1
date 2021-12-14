@@ -107,6 +107,29 @@ static ASElement returnProductById(Matamikya matamikya, const unsigned int produ
     return NULL;
 }
 
+static SetElement returnOrderById(Matamikya matamikya, const unsigned int orderId)
+{
+    RETURN_IF_NULL(matamikya, NULL);
+    SET_FOREACH(SetElement, iterator, matamikya->orders){
+        if(getOrderId(iterator) - orderId == 0){
+            return iterator;
+        }
+    }
+    return NULL;
+}
+
+static ASElement returnAsElementIdById(AmountSet as_product_ids, const unsigned int productId)
+{
+    RETURN_IF_NULL(as_product_ids, NULL);
+    AS_FOREACH(ASElement, iterator, as_product_ids){
+        int iterator_id = *(int*)iterator;
+        if(iterator_id - productId == 0){
+            return iterator;
+        }
+    }
+    return NULL;
+}
+
 MatamikyaResult mtmNewProduct(Matamikya matamikya, const unsigned int id, const char *name,
                               const double amount, const MatamikyaAmountType amountType,
                               const MtmProductData customData, MtmCopyData copyData,
@@ -176,6 +199,11 @@ MatamikyaResult mtmClearProduct(Matamikya matamikya, const unsigned int id)
     if(delete_product_result == AS_NULL_ARGUMENT || delete_product_result == AS_ITEM_DOES_NOT_EXIST){
         return MATAMIKYA_PRODUCT_NOT_EXIST;
     }
+    SET_FOREACH(SetElement, iterator1, matamikya->orders){
+        AmountSet products_in_order = getOrderProductIds(iterator1);
+        RETURN_IF_NULL(products_in_order, MATAMIKYA_NULL_ARGUMENT);
+        asDelete(products_in_order, returnAsElementIdById(products_in_order, id));
+    }
     AmountSetResult delete_product_profit_result = asDelete(matamikya->profit, (ASElement)(&id));
     if(delete_product_profit_result == AS_NULL_ARGUMENT){
         return MATAMIKYA_NULL_ARGUMENT;
@@ -205,29 +233,6 @@ static bool isOrderExists(Matamikya matamikya, const unsigned int orderId)
     bool is_in = setIsIn(matamikya->orders, tmp);
     freeOrder(tmp);
     return is_in;
-}
-
-static SetElement returnOrderById(Matamikya matamikya, const unsigned int orderId)
-{
-    RETURN_IF_NULL(matamikya, NULL);
-    SET_FOREACH(SetElement, iterator, matamikya->orders){
-        if(getOrderId(iterator) - orderId == 0){
-            return iterator;
-        }
-    }
-    return NULL;
-}
-
-static ASElement returnAsElementIdById(AmountSet as_product_ids, const unsigned int productId)
-{
-    RETURN_IF_NULL(as_product_ids, NULL);
-    AS_FOREACH(ASElement, iterator, as_product_ids){
-        int iterator_id = *(int*)iterator;
-        if(iterator_id - productId == 0){
-            return iterator;
-        }
-    }
-    return NULL;
 }
 
 MatamikyaResult mtmChangeProductAmountInOrder(Matamikya matamikya, const unsigned int orderId,
